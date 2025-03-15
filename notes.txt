@@ -1,0 +1,1 @@
+getting all data from the yfinance 
