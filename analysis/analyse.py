@@ -95,6 +95,37 @@ class Company_details:
             else:
                 pe.append(0)
         return pe
+    
+    def get_revenue_income(self):
+        company_info = self.company_info
+        income = self.yf_api_fetch.income_stmt
+        years = [date.strftime('%Y') for date in income.columns][::-1]
+        years_length = len(years)
+        
+        def finance_data_helper(key, df, length):
+            if key in df.index:
+                return [data if not pd.isna(data) else 0 for data in df.loc[key]][::-1]
+            else:
+                return [1] * length
+    
+        def val_to_crore(arr):
+            return [round(val / 10000000, 2) for val in arr]
+
+        revenue = finance_data_helper('Total Revenue', income, years_length)
+        net_income = finance_data_helper('Net Income', income, years_length)
+        if revenue[0] == 0:
+                years = years[1:]
+                revenue = revenue[1:]
+                net_income = net_income[1:]
+
+        data = {
+            'years' : [int(year) for year in years],
+            'revenue' : val_to_crore(revenue),
+            'net_income' : val_to_crore(net_income)
+        }
+    
+        return data
+    
 
     def company_data(self):
         company_info = self.company_info
@@ -122,6 +153,9 @@ class Company_details:
                 return tv_indicater_data['oscillator']['COMPUTE'][indicator]
             else:
                 return 'NEUTRAL'
+            
+        def val_to_crore(arr):
+            return [round(val / 10000000, 2) for val in arr]
 
         # =================== extracting required data from income ==================================
         revenue = finance_data_helper('Total Revenue', income, years_length)
@@ -149,6 +183,24 @@ class Company_details:
 
         holding = self.holding()
 
+        if revenue[0] == 0:
+            years = years[1:]
+            revenue = revenue[1:]
+            operating_expence = operating_expence[1:]
+            net_income = net_income[1:]
+            eps = eps[1:]
+            profit_margin = profit_margin[1:]
+            shareholders_equity = shareholders_equity[1:]
+            total_assets = total_assets[1:]
+            total_liabilities = total_liabilities[1:]
+            cash_equivalents = cash_equivalents[1:]
+            roe = roe[1:]
+            free_cashflow = free_cashflow[1:]
+            operating_cashflow = operating_cashflow[1:]
+            investing_cashflow = investing_cashflow[1:]
+            financing_cashflow = financing_cashflow[1:]
+
+
         data = {
             'bussiness': helper('longBusinessSummary'),
             'share_price': helper('currentPrice'),
@@ -160,24 +212,24 @@ class Company_details:
             'marketcap':round(helper('marketCap')/10000000),
             'industry' : helper('industry'),
             'sector':helper('sector'),
-            'dates' : years,
-            'revenue' : revenue,
-            'operating_expence' : operating_expence,
-            'net_income' : net_income,
+            'years' : [int(year) for year in years],
+            'revenue' : val_to_crore(revenue),
+            'operating_expence' : val_to_crore(operating_expence),
+            'net_income' : val_to_crore(net_income),
             'eps' : eps,
             'pe' : round(helper('trailingPE'), 2),
             'pb' : round(helper('priceToBook'), 2),
             'profit_margin' : profit_margin,
             'total_debt' : total_debt,
-            'shareholders_equity' : shareholders_equity,
-            'total_assets' : total_assets,
-            'total_liabilities' : total_liabilities,
-            'cash_equivalents': cash_equivalents,
+            'shareholders_equity' : val_to_crore(shareholders_equity),
+            'total_assets' : val_to_crore(total_assets),
+            'total_liabilities' : val_to_crore(total_liabilities),
+            'cash_equivalents': val_to_crore(cash_equivalents),
             'roe' : roe,
-            'free_cashflow' : free_cashflow,
-            'operating_cashflow' : operating_cashflow,
-            'investing_cashflow' : investing_cashflow,
-            'financing_cashflow' : financing_cashflow,
+            'free_cashflow' : val_to_crore(free_cashflow),
+            'operating_cashflow' : val_to_crore(operating_cashflow),
+            'investing_cashflow' : val_to_crore(investing_cashflow),
+            'financing_cashflow' : val_to_crore(financing_cashflow),
             'holding' : holding,
             'targetprice' : helper('targetHighPrice'),
             'fifty2_week_low' : helper('fiftyTwoWeekLow'),

@@ -1,16 +1,23 @@
 import os
 import numpy as np
+from analyse import Company_details
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import LSTM, Dense
 
-class Predict_values:
-    def __init__(self, years, revenue):
-        self.years = years
-        self.revenue = revenue
-        self.feature_years_arr = []
-        self.feature_revenue_arr = []
+class PredictValues:
+    def __init__(self, c_name):
+        self.c_name = c_name
+        self.future_years_arr = []
+        self.future_values_arr = []
         self.n_feature = 1
         self.n_steps = 3
+        self.model = self.model_tain()
+        self.c_details = get_c_details(self.c_name)
+
+        def get_c_details(name):
+            c_details = Company_details(name)
+            return c_details.get_revenue_income()
+
 
     def find_growth(self, val_1, val_2):
         # Calculate percentage growth between two values.
@@ -42,15 +49,15 @@ class Predict_values:
         # Reshape the input to [samples, timesteps, features]
         x_data = x_data.reshape((x_data.shape[0], x_data.shape[1], self.n_feature))
 
-        model.fit(x_data, prepared_data['y_data'], epochs=100, verbose=1)
+        model.fit(x_data, prepared_data['y_data'], epochs=300, verbose=1)
         return model
 
-    def get_feature_values(self, x_input, feature_year):
+    def get_future_values(self, x_input, future_year):
         x_input = np.array(x_input)
         temp_input = list(x_input)
 
         current_year = self.years[-1]
-        while current_year <= feature_year:
+        while current_year <= future_year:
             if len(temp_input) > self.n_steps:
                 # If temp_input is longer than n_steps, keep only the latest n_steps values.
                 x_input = np.array(temp_input[1:])
@@ -62,17 +69,19 @@ class Predict_values:
                 x_input = x_input.reshape((1, self.n_steps, self.n_feature))
                 yhat = self.model.predict(x_input, verbose=0)
                 temp_input.append(yhat[0][0])
-            self.feature_revenue_arr.append(round(yhat[0][0], 2))
-            self.feature_years_arr.append(current_year)
+            self.future_values_arr.append(round(yhat[0][0], 2))
+            self.future_years_arr.append(current_year)
             current_year += 1
 
-        return {'feature_revenue': self.feature_revenue_arr, 'feature_years': self.feature_years_arr}
+        return {'values': self.future_values_arr, 'years': self.future_years_arr}
+
+        
 
 # Example usage:
 if __name__ == '__main__':
     years = [year for year in range(2015, 2025)]
     revenue = [110, 100, 130, 120, 160, 140, 180, 160, 200]
     x_input = [110, 100, 130, 120]
-    pv = Predict_values(years, revenue)
-    forecast_results = pv.get_feature_values(x_input, 2030)
+    pv = PredictValues(years, revenue)
+    forecast_results = pv.get_future_values(x_input, 2030)
     print(forecast_results)
