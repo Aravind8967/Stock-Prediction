@@ -1,2 +1,3 @@
-from .analyse import Company_details
-from .predict_values import PredictValues
+from APICall import CompanyDetails
+from FindValues import sharePriceArr, companyDetails, previousValues
+from PredictValues import PredictValues
