@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from analyse import Company_details
+from Microservices.projects.stock_prediction.analysis.APICall import Company_details
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import LSTM, Dense
 
@@ -11,7 +11,7 @@ class PredictValues:
         self.future_values_arr = []
         self.n_feature = 1
         self.n_steps = 3
-        self.model = self.model_tain()
+        self.model = self.modelTrain()
         self.c_details = get_c_details(self.c_name)
 
         def get_c_details(name):
@@ -19,11 +19,11 @@ class PredictValues:
             return c_details.get_revenue_income()
 
 
-    def find_growth(self, val_1, val_2):
+    def findGrowth(self, val_1, val_2):
         # Calculate percentage growth between two values.
         return round((((100 * val_2) / val_1) - 100), 2)
     
-    def prepare_data(self):
+    def prepareData(self):
         x_data, y_data = [], []
 
         for i in range(len(self.revenue)):
@@ -37,14 +37,14 @@ class PredictValues:
         # Convert lists into NumPy arrays.
         return {'x_data': np.array(x_data), 'y_data': np.array(y_data)}
     
-    def model_tain(self):
+    def modelTrain(self):
         model = Sequential()
         model.add(LSTM(100, activation='relu', return_sequences=True, input_shape=(self.n_steps, self.n_feature)))
         model.add(LSTM(100, activation='relu'))
         model.add(Dense(1))
         model.compile(optimizer='adam', loss='mse')
         
-        prepared_data = self.prepare_data()
+        prepared_data = self.prepareData()
         x_data = prepared_data['x_data']
         # Reshape the input to [samples, timesteps, features]
         x_data = x_data.reshape((x_data.shape[0], x_data.shape[1], self.n_feature))
@@ -52,7 +52,7 @@ class PredictValues:
         model.fit(x_data, prepared_data['y_data'], epochs=300, verbose=1)
         return model
 
-    def get_future_values(self, x_input, future_year):
+    def getFutureValues(self, x_input, future_year):
         x_input = np.array(x_input)
         temp_input = list(x_input)
 
@@ -83,5 +83,5 @@ if __name__ == '__main__':
     revenue = [110, 100, 130, 120, 160, 140, 180, 160, 200]
     x_input = [110, 100, 130, 120]
     pv = PredictValues(years, revenue)
-    forecast_results = pv.get_future_values(x_input, 2030)
+    forecast_results = pv.getFutureValues(x_input, 2030)
     print(forecast_results)

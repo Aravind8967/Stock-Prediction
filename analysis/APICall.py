@@ -6,16 +6,16 @@ import pandas as pd
 import requests
 
 
-class Company_details:
+class CompanyDetails:
     def __init__(self, name):
         self.company_name = f'{name}.NS'
         self.yf_api_fetch = yf.Ticker(self.company_name)
         self.company_info = self.yf_api_fetch.info
         self.company_symbol = name
-        self.tv_fetch_data = self.tradingview_connect()
+        self.tv_fetch_data = self.tradingviewConnect()
 
 
-    def tradingview_connect(self):
+    def tradingviewConnect(self):
         handler = TA_Handler(
             symbol=self.company_symbol,
             screener="india",
@@ -42,7 +42,7 @@ class Company_details:
         else:
             return None
         
-    def share_price_range(self, period='max', interval='1d'):
+    def sharePriceRange(self, period='max', interval='1d'):
         stock = self.yf_api_fetch
         share_price_arr = stock.history(period=period, interval=interval)
         if share_price_arr.empty : return []
@@ -58,7 +58,7 @@ class Company_details:
             })
         return filtered_data
 
-    def get_nearest_shareprice(self, date):
+    def getNearSharePrice(self, date):
         date = datetime.strptime(date, '%Y-%m-%d').date()
         start_date = (date - timedelta(days=5)).strftime('%Y-%m-%d')  # start 10 days before the date
         end_date = (date + timedelta(days=5)).strftime('%Y-%m-%d')
@@ -87,7 +87,7 @@ class Company_details:
         dates = self.yf_api_fetch.income_stmt.columns
         dates = [date.strftime('%Y-%m-%d') for date in dates][::-1]
         
-        shareprice_arr = [self.get_nearest_shareprice(shareprice) for shareprice in dates]
+        shareprice_arr = [self.getNearSharePrice(shareprice) for shareprice in dates]
         pe = []
         for shares, price in zip(shareprice_arr, eps):
             if price != 0:
@@ -96,7 +96,7 @@ class Company_details:
                 pe.append(0)
         return pe
     
-    def get_revenue_income(self):
+    def getRevenueIncome(self):
         company_info = self.company_info
         income = self.yf_api_fetch.income_stmt
         years = [date.strftime('%Y') for date in income.columns][::-1]
@@ -127,7 +127,7 @@ class Company_details:
         return data
     
 
-    def company_data(self):
+    def companyDetails(self):
         company_info = self.company_info
         income = self.yf_api_fetch.income_stmt
         balence = self.yf_api_fetch.balance_sheet
@@ -273,29 +273,3 @@ class Company_details:
         instituation = round(major_holders.loc['institutionsPercentHeld', 'Value']*100, 2)
         public = round(100 - (insider + instituation), 2)
         return [insider, instituation, public]
-
-
-if __name__ == "__main__":
-    # Example usage
-    company_symbol = 'RELIANCE'
-    data = yfinance(company_symbol)   
-    tv_data = data.yfinance_data()
-    print(tv_data)
-    # print("=================== income ========================")
-    # print(income_stmt['dates'])
-    # print("revenue : ", income_stmt['revenue'])
-    # print("operating_expence : ", income_stmt['operating_expence'])
-    # print("net_income : ", income_stmt['net_income'])
-    # print("eps : ", income_stmt['eps'])
-    # print("profit_margin : ", income_stmt['profit_margin'])
-    # print("total_debt : ", income_stmt['total_debt'])
-    # print("shareholders_equity : ", income_stmt['shareholders_equity'])
-    # print("total_assets : ", income_stmt['total_assets'])
-    # print("total_liabilities : ", income_stmt['total_liabilities'])
-    # print("roe : " , income_stmt['roe'])
-    # print("free_cashflow : " , income_stmt['free_cashflow'])
-    # print("operating_cashflow : " , income_stmt['operating_cashflow'])
-    # print("financing_cashflow : " , income_stmt['financing_cashflow'])
-    # print("investing_cashflow : " , income_stmt['investing_cashflow'])
-    # print("cash_equivalents : " , income_stmt['cash_equivalents'])
-    # print()
