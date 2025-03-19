@@ -6,27 +6,32 @@ from .PredictValues import PredictValues
 class Analyse:
     def __init__(self, c_name):
         self.c_name = c_name
+        self.company_details = CompanyDetails(self.c_name)
+        self.predict_values = PredictValues(self.c_name)
+        self.future_revenue_income = self.predict_values.futureRevenueIncome()
 
     def getAPIValues(self):
-        details = CompanyDetails(self.c_name)
-        revenue_income = details.getRevenueIncome()
+        revenue_income = self.company_details.getRevenueIncome()
         return {
             'years':revenue_income['years'],
             'revenue':revenue_income['revenue'],
             'income':revenue_income['income']
         }
     
-    def predictionValues(self):
-        predict_values = PredictValues(self.c_name)
-        future_revenue_income = predict_values.futureRevenueIncome()
+    def RevenueIncomeAnalyse(self):
         return {
-            'p_years': future_revenue_income['p_years'],
-            'p_revenue' : future_revenue_income['p_revenue'],
-            'p_income' : future_revenue_income['p_income'],
-            'years' : future_revenue_income['years'],
-            'revenue' : future_revenue_income['revenue'],
-            'income' : future_revenue_income['income']
+            'p_years': self.future_revenue_income['p_years'],
+            'p_revenue' : self.future_revenue_income['p_revenue'],
+            'p_income' : self.future_revenue_income['p_income'],
+            'years' : self.future_revenue_income['years'],
+            'revenue' : self.future_revenue_income['revenue'],
+            'income' : self.future_revenue_income['income']
         }
+    
+    def ROEAnalyse(self):
+        prev_roe = self.company_details.roe(self.future_revenue_income['p_income'], self.future_revenue_income)
+        
+
 
 
 if __name__ == '__main__':
