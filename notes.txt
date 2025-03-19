@@ -46,3 +46,13 @@ day_high : 1413.95
 line_data : {'support1': 1359.37, 'support2': 1288.23, 'support3': 1132.78, 'resistance1': 1514.82, 'resistance2': 1599.13, 'resistance3': 1754.58}       
 indicator_data : {'summary': 'SELL', 'rsi': 'NEUTRAL', 'adx': 'NEUTRAL', 'momentum': 'SELL', 'macd': 'SELL', 'bbp': 'NEUTRAL'}
 ===================================================================
+
+
+=========================== Need to consider below values into website =============================================================================
+
+revenue
+income
+eps
+roe
+operating_expence
+profit_margin

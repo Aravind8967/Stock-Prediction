@@ -5,17 +5,20 @@ import numpy as np
 class FindValues:
     def __init__(self, c_name):
         self.c_name = c_name
-
-    def getRevenueIncome(self):
         details = CompanyDetails(self.c_name)
-        revene_income = details.getRevenueIncome()
-        previous_values = self.previousValues(revene_income['years'], revene_income['revenue'], revene_income['income'])
-
-        return {
-            'years': previous_values['years'], 
-            'revenue': previous_values['revenue'], 
-            'income': previous_values['income']
-        }
+        self.company_details = details.companyDetails()
+    
+    def getCompanyDetails(self):
+        years, revenue, income = self.company_details['years'], self.company_details['revenue'], self.company_details['income']
+        previous_values = self.previousValues(years, revenue, income)
+        self.company_details['years'] = previous_values['years']
+        self.company_details['revenue'] = previous_values['revenue']
+        self.company_details['income'] = previous_values['income']
+        self.company_details['roe'] = self.findROE(previous_values['income'])
+        self.company_details['profit_margin'] = self.findOPM(previous_values['revenue'], previous_values['income'])
+        self.company_details['eps'] = self.findEPS(previous_values['income'])
+        
+        return self.company_details
 
     def previousValues(self, years, revenue, income, target_start_year = 2012):
         revenue_growth = []
@@ -53,7 +56,31 @@ class FindValues:
             'revenue': ext_revenue, 
             'income': ext_income
         }
-
+    
+    def findROE(self, net_income):
+        roe = []
+        shareholder_equity = self.company_details['shareholders_equity'][-2]
+        for val in net_income:
+            if val != 0 and shareholder_equity != 0:
+                roe.append(round(((val / shareholder_equity) * 100), 2))
+            else:
+                roe.append(0)
+        return roe
+    
+    def findOPM(self, revenue, net_income):
+        opm = []
+        for rev, ni in zip(revenue, net_income):
+            if rev != 0 and ni != 0:
+                opm.append(round(((ni / rev) * 100), 2))
+            else:
+                opm.append(0)
+        return opm
+    
+    def findEPS(self, net_income):
+        eps = []
+        for val in net_income:
+            eps.append(round(val / self.company_details['outstanding_shares'], 2))
+        return eps
 
 def main_1(): 
 
