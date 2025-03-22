@@ -1,7 +1,7 @@
 import os
 import numpy as np
-from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import LSTM, Dense
+from keras.models import Sequential, load_model
+from keras.layers import LSTM, Dense
 
 class PredictValues:
     def __init__(self, years, revenue):

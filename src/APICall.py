@@ -35,14 +35,14 @@ class CompanyDetails:
         return data       
 
 
-    def share_price(self):
+    def sharePrice(self):
         data = self.company_info
         if 'currentPrice' in data:
             return data['currentPrice']
         else:
             return None
         
-    def sharePriceRange(self, period='max', interval='1d'):
+    def sharePriceRange_test(self, period='max', interval='1d'):
         stock = self.yf_api_fetch
         share_price_arr = stock.history(period=period, interval=interval)
         if share_price_arr.empty : return []
@@ -53,8 +53,22 @@ class CompanyDetails:
             volume = row['Volume']
             filtered_data.append({
                 'time': date,
-                'share_price': share_price,
+                'close': share_price,
                 'volume': volume
+            })
+        return filtered_data
+
+    def sharePriceRange(self, period='max', interval='1d'):
+        stock = self.yf_api_fetch
+        share_price_arr = stock.history(period=period, interval=interval)
+        if share_price_arr.empty : return []
+        filtered_data = []    
+        for index, row in share_price_arr.iterrows():
+            date = index.strftime('%Y-%m-%d')
+            share_price = round(row['Close'], 2)
+            filtered_data.append({
+                'Date' : date,
+                'Close' : share_price
             })
         return filtered_data
 
