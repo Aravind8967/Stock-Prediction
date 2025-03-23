@@ -60,17 +60,15 @@ class CompanyDetails:
 
     def sharePriceRange(self, period='max', interval='1d'):
         stock = self.yf_api_fetch
-        share_price_arr = stock.history(period=period, interval=interval)
-        if share_price_arr.empty : return []
-        filtered_data = []    
-        for index, row in share_price_arr.iterrows():
-            date = index.strftime('%Y-%m-%d')
-            share_price = round(row['Close'], 2)
-            filtered_data.append({
-                'Date' : date,
-                'Close' : share_price
-            })
-        return filtered_data
+        share_price_df = stock.history(period=period, interval=interval)
+        if share_price_df.empty: 
+            return []
+        
+        share_price_df = share_price_df.reset_index()
+        share_price_df['Date'] = share_price_df['Date'].dt.strftime('%Y-%m-%d')
+        share_price_df['Close'] = share_price_df['Close'].round(2)
+        filtered_data = share_price_df[['Date', 'Close']]
+        return filtered_data       
 
     def getNearSharePrice(self, date):
         date = datetime.strptime(date, '%Y-%m-%d').date()
