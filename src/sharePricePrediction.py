@@ -2,6 +2,7 @@ from src import CompanyDetails
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, Input
 from keras.optimizers import Adam
+from keras.callbacks import EarlyStopping
 import numpy as np
 import pandas as pd
 import datetime
@@ -12,18 +13,29 @@ class SharePricePrediction:
         self.company_details = CompanyDetails(c_name)
 
     def str_to_datetime(self, date_str):
-        year, month, day = map(int, date_str.split('-'))
-        return datetime.datetime(year=year, month=month, day=day)
+        return datetime.datetime.strptime(date_str, '%Y-%m-%d')
 
-    def prediction(self, pred_range='2y', pred_intvel='1d'):
+
+    def prediction(self, first_date_str, last_date_str, pred_range='2y', pred_intvel='1d'):
+        # last_date = datetime.datetime.now().date()
+        # first_date = last_date - datetime.timedelta(days=365 * 2)
+        # first_date_str = str(first_date)
+        # last_date_str = str(last_date)
         
         share_price_df = self.company_details.sharePriceRange(pred_range, pred_intvel)
-        share_price_df['Date'] = share_price_df['Date'].apply(self.str_to_datetime)
+        share_price_df['Date'] = share_price_df['Date'].apply(lambda d: datetime.datetime.strptime(d, '%Y-%m-%d'))
         share_price_df.index = share_price_df.pop('Date')
-        windowed_df = self.df_to_windowed_df(share_price_df, '2023-03-21', '2025-03-21')
+        windowed_df = self.df_to_windowed_df(share_price_df, first_date_str, last_date_str)
+        
+        if windowed_df is None:
+            raise ValueError("Windowed dataframe creation failed due to insufficient data.")
         
         train_test_validation = self.trainTestValidation(windowed_df)
-        return train_test_validation
+        return {
+                'train_test_validation': train_test_validation, 
+                'share_price_df' : share_price_df
+            }
+
 
     def extractWindow(self, dataframe, target_date, n):
         window = dataframe.loc[:target_date].tail(n+1)
@@ -33,14 +45,32 @@ class SharePricePrediction:
         x = values[:-1]
         y = values[-1]
         return x, y
-
+    
     def getNextTargetDate(self, dataframe, current_date, days_ahead=7):
-        next_week = dataframe.loc[current_date:current_date + datetime.timedelta(days=days_ahead)]
-        next_datetime_str = str(next_week.head(2).tail(1).index.values[0])
-        next_date_str = next_datetime_str.split('T')[0]
-        next_date = datetime.datetime.strptime(next_date_str, '%Y-%m-%d')
-        return next_date
-
+        # Ensure the dates are sorted
+        dates = dataframe.index.sort_values()
+        
+        if current_date not in dates:
+            pos = dates.searchsorted(current_date)
+            if pos < len(dates):
+                current_date = dates[pos]
+            else:
+                return None  # No further dates available.
+        
+        pos = dates.get_loc(current_date)
+        # If current_date is the last available date, return None.
+        if pos >= len(dates) - 1:
+            return None
+        
+        for next_date in dates[pos+1:]:
+            if next_date <= current_date + datetime.timedelta(days=days_ahead):
+                return next_date
+            else:
+                break  # Exit if the date is beyond the window.
+        
+        # Fallback: return the immediate next available date.
+        return dates[pos+1]
+    
     def buildWindowedDF(self, dates, X, Y, n):
         ret_df = pd.DataFrame()
         ret_df['Target Date'] = dates
@@ -49,7 +79,7 @@ class SharePricePrediction:
             ret_df[f'Target-{n-i}'] = X[:, i]
         ret_df['Target'] = Y
         return ret_df
-
+    
     def df_to_windowed_df(self, dataframe, first_date_str, last_date_str, n=3):
         first_date = self.str_to_datetime(first_date_str)
         last_date = self.str_to_datetime(last_date_str)
@@ -57,7 +87,6 @@ class SharePricePrediction:
         target_date = first_date
         dates = []
         X, Y = [], []
-        last_time = False
 
         while True:
             try:
@@ -70,16 +99,14 @@ class SharePricePrediction:
             X.append(x)
             Y.append(y)
 
-            # Determine the next target date (within a week ahead).
+            # Get the next available target date.
             next_date = self.getNextTargetDate(dataframe, target_date, days_ahead=7)
 
-            if last_time:
+            # Exit if no further date is available or the next date is beyond the last date.
+            if next_date is None or next_date > last_date:
                 break
 
             target_date = next_date
-
-            if target_date == last_date:
-                last_time = True
 
         return self.buildWindowedDF(dates, X, Y, n)
     
@@ -158,6 +185,8 @@ class SharePricePrediction:
         model.compile(loss='mse',
                       optimizer=Adam(learning_rate=0.001),
                       metrics=['mean_absolute_error'])
+        
+        early_stop = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+        model.fit(x_train, y_train, validation_data=(x_valid, y_valid), epochs=100, callbacks=[early_stop])
 
-        model.fit(x_train, y_train, validation_data=(x_valid, y_valid), epochs=100)
         return model
