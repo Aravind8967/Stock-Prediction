@@ -1,10 +1,9 @@
-import numpy as np
+from src import CompanyDetails
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, Input
 from keras.optimizers import Adam
+import numpy as np
 import pandas as pd
-
-from src import CompanyDetails
 import datetime
 
 class SharePricePrediction:
@@ -13,100 +12,66 @@ class SharePricePrediction:
         self.company_details = CompanyDetails(c_name)
 
     def str_to_datetime(self, date_str):
-        split = date_str.split('-')
-        year, month, day = int(split[0]), int(split[1]), int(split[2])
+        year, month, day = map(int, date_str.split('-'))
         return datetime.datetime(year=year, month=month, day=day)
 
-    def prediction(self, first_date, last_date):
-        share_price_arr = self.company_details.sharePriceRange('4y', '1d')
-        share_price_df = pd.DataFrame(share_price_arr)
+    def prediction(self, pred_range='2y', pred_intvel='1d'):
+        
+        share_price_df = self.company_details.sharePriceRange(pred_range, pred_intvel)
         share_price_df['Date'] = share_price_df['Date'].apply(self.str_to_datetime)
         share_price_df.index = share_price_df.pop('Date')
+        windowed_df = self.df_to_windowed_df(share_price_df, '2023-03-21', '2025-03-21')
+        
+        train_test_validation = self.trainTestValidation(windowed_df)
+        return train_test_validation
 
-        share_price_window_df = self.df_to_windowed_df(share_price_df,first_date_str=first_date, last_date_str=last_date)
-        dates, X, y = self.windowed_df_to_date_X_y(share_price_window_df)
-        q_80 = int(len(dates) * .8)
-        q_90 = int(len(dates) * .9)
+    def extractWindow(self, dataframe, target_date, n):
+        window = dataframe.loc[:target_date].tail(n+1)
+        if len(window) != n+1:
+            raise ValueError(f'Window of size {n} is too large for date {target_date}')
+        values = window['Close'].to_numpy()
+        x = values[:-1]
+        y = values[-1]
+        return x, y
 
-        dates_train, X_train, y_train = dates[:q_80], X[:q_80], y[:q_80]
+    def getNextTargetDate(self, dataframe, current_date, days_ahead=7):
+        next_week = dataframe.loc[current_date:current_date + datetime.timedelta(days=days_ahead)]
+        next_datetime_str = str(next_week.head(2).tail(1).index.values[0])
+        next_date_str = next_datetime_str.split('T')[0]
+        next_date = datetime.datetime.strptime(next_date_str, '%Y-%m-%d')
+        return next_date
 
-        dates_val, X_val, y_val = dates[q_80:q_90], X[q_80:q_90], y[q_80:q_90]
-        dates_test, X_test, y_test = dates[q_90:], X[q_90:], y[q_90:]
-        values =  {
-            'X_train': X_train,
-            'y_train' : y_train,
-            'dates_train' : dates_train,
-            'dates_val' : dates_val,
-            'X_val' : X_val,
-            'y_val' : y_val,
-            'X_test' : X_test,
-            'y_test' : y_test,
-            'dates_test' : dates_test
-        }
-
-        model = self.train_model(values)
-        train_prediction = model.predict(X_train)
-        val_prediction = model.predict(X_val).flatten()
-        test_prediction = model.predict(X_test).flatten()
-
-        predicted_val = {
-            'dates_train' : dates_train,
-            'train_prediction' : train_prediction,
-            'val_prediction' : val_prediction,
-            'test_prediction' : test_prediction,
-            'y_train' : y_train,
-            'y_val' : y_val,
-            'y_test' : y_test
-        }
-
-        return predicted_val
-
-
-
-    def train_model(self, values):
-        model = Sequential([Input((3, 1)),
-                            LSTM(64),
-                            Dense(32, activation='relu'),
-                            Dense(32, activation='relu'),
-                            Dense(1)])
-
-        model.compile(loss='mse',
-                    optimizer=Adam(learning_rate=0.001),
-                    metrics=['mean_absolute_error'])
-
-        model.fit(values['X_train'], values['y_train'], validation_data=(values['X_val'], values['y_val']), epochs=100)
-        return model
+    def buildWindowedDF(self, dates, X, Y, n):
+        ret_df = pd.DataFrame()
+        ret_df['Target Date'] = dates
+        X = np.array(X)
+        for i in range(n):
+            ret_df[f'Target-{n-i}'] = X[:, i]
+        ret_df['Target'] = Y
+        return ret_df
 
     def df_to_windowed_df(self, dataframe, first_date_str, last_date_str, n=3):
         first_date = self.str_to_datetime(first_date_str)
-        last_date  = self.str_to_datetime(last_date_str)
+        last_date = self.str_to_datetime(last_date_str)
 
         target_date = first_date
-
         dates = []
         X, Y = [], []
-
         last_time = False
+
         while True:
-            df_subset = dataframe.loc[:target_date].tail(n+1)
-
-            if len(df_subset) != n+1:
-                print(f'Error: Window of size {n} is too large for date {target_date}')
-                return
-
-            values = df_subset['Close'].to_numpy()
-            x, y = values[:-1], values[-1]
+            try:
+                x, y = self.extractWindow(dataframe, target_date, n)
+            except ValueError as e:
+                print(e)
+                return None
 
             dates.append(target_date)
             X.append(x)
             Y.append(y)
 
-            next_week = dataframe.loc[target_date:target_date+datetime.timedelta(days=7)]
-            next_datetime_str = str(next_week.head(2).tail(1).index.values[0])
-            next_date_str = next_datetime_str.split('T')[0]
-            year_month_day = next_date_str.split('-')
-            year, month, day = year_month_day
-            next_date = datetime.datetime(day=int(day), month=int(month), year=int(year))
+            # Determine the next target date (within a week ahead).
+            next_date = self.getNextTargetDate(dataframe, target_date, days_ahead=7)
 
             if last_time:
                 break
@@ -116,26 +81,83 @@ class SharePricePrediction:
             if target_date == last_date:
                 last_time = True
 
-        ret_df = pd.DataFrame({})
-        ret_df['Target Date'] = dates
+        return self.buildWindowedDF(dates, X, Y, n)
+    
+    def windowTodateXY(self, window_df):
+        # Converts every row of df to an array 
+        df_as_np = window_df.to_numpy()
+        # df_as_np o/p = [[Timestamp('2023-03-21 00:00:00') 361.41 355.82 358.9 357.15]..........]
 
-        X = np.array(X)
-        for i in range(0, n):
-            X[:, i]
-            ret_df[f'Target-{n-i}'] = X[:, i]
-
-        ret_df['Target'] = Y
-
-        return ret_df
-
-    def windowed_df_to_date_X_y(self, windowed_dataframe):
-        df_as_np = windowed_dataframe.to_numpy()
-
+        # first colume of window_df is about dates
+        # : = hole df_as_np array's [0]'th val means dates colume
+        # o/p = [Timestamp('2023-03-21 00:00:00')]
         dates = df_as_np[:, 0]
 
+        # it is about window_df[share_price_values]
+        # : = hole df_as_np array's [1st_colume] to [last_colume]
+        # o/p = [361.41 355.82 358.9] accept target value
         middle_matrix = df_as_np[:, 1:-1]
-        X = middle_matrix.reshape((len(dates), middle_matrix.shape[1], 1))
 
-        Y = df_as_np[:, -1]
+        '''
+            o/p = [[[361.41]
+                    [355.82]
+                    [358.9]]
+                    .........
+                    .........]]    
+        '''
+        data_x = middle_matrix.reshape((len(dates), middle_matrix.shape[1], 1))
+        
+        # below line gives output with only df_values
+        # : means hole [0] end of err    -1 = second part of values
+        # o/p = [357.15 357.91 360.65 358.81 360.23]
+        data_y = df_as_np[:, -1]
+        return dates, data_x.astype(np.float32), data_y.astype(np.float32)
+    
+    def trainTestValidation(self, windowed_df):
+        dates, data_x, data_y = self.windowTodateXY(windowed_df)
 
-        return dates, X.astype(np.float32), Y.astype(np.float32)
+        q_80 = int(len(dates) * .8)
+        q_90 = int(len(dates) * .9)
+
+        # Training dataset
+        dates_train, x_train, y_train = dates[:q_80], data_x[:q_80], data_y[:q_80]
+
+        # Validation dataset
+        dates_valid, x_valid, y_valid = dates[q_80:q_90], data_x[q_80:q_90], data_y[q_80:q_90]
+
+        # testing dataset
+        dates_test, x_test, y_test = dates[q_90:], data_x[q_90:], data_y[q_90:]
+
+        model = self.model_train(x_train, y_train, x_valid, y_valid)
+
+        train_prediction = model.predict(x_train).flatten()
+
+        valid_prediction = model.predict(x_valid).flatten()
+
+        test_prediction = model.predict(x_test).flatten()
+
+        return {
+            'dates_train' : dates_train,
+            'y_train' : y_train,
+            'train_prediction' : train_prediction,
+            'dates_valid' : dates_valid,
+            'y_valid' : y_valid,
+            'valid_prediction' : valid_prediction,
+            'dates_test' : dates_test,
+            'y_test' : y_test,
+            'test_prediction' : test_prediction
+        }
+
+    def model_train(self, x_train, y_train, x_valid, y_valid):
+        model = Sequential([Input((3, 1)),
+                            LSTM(64),
+                            Dense(32,activation='relu'),
+                            Dense(32, activation='relu'),
+                            Dense(1)])
+        
+        model.compile(loss='mse',
+                      optimizer=Adam(learning_rate=0.001),
+                      metrics=['mean_absolute_error'])
+
+        model.fit(x_train, y_train, validation_data=(x_valid, y_valid), epochs=100)
+        return model
