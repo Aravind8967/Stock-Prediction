@@ -1,0 +1,58 @@
+=========================== krish_code ==============================
+kish code technic used to predict the future value of share price
+prediction 
+
+note :- uses last window to predict the future values tried this it code 
+giving stright horizontal line 
+
+* predicting every day share_price along with EMA 200
+
+alpha = 2 / 201.0
+
+# Number of timesteps in the window (should match your model's window_size)
+n_steps = 5  
+n_features = 2  # [Close, ema200]
+
+# Prepare the initial window from your dataframe with both 'Close' and 'ema200'
+# This should have shape (n_steps, 2)
+cdsl_last_window = cdsl_share_price_df[['Close', 'ema200']].tail(n_steps).to_numpy()
+
+# Convert the initial window into a list of lists for easy updating.
+temp_input = cdsl_last_window.tolist()
+print("Initial window:", temp_input)
+
+# Lists to store forecasted values
+cdsl_future_close = []
+cdsl_future_ema = []
+
+# Set the number of iterations (e.g., future_years * 12 for one value per month)
+iterations = cdsl_future_year * 100
+
+# Iteratively predict the next value and update the window
+for i in range(iterations):
+    # Convert the current window (temp_input) to a numpy array and reshape it for the model.
+    x_input = np.array(temp_input).reshape((1, n_steps, n_features))
+    
+    # Predict the next day's Close price using the saved model.
+    yhat = model.predict(x_input, verbose=0)
+    pred_close_val = yhat.flatten()[0]
+    
+    # Get the last EMA from the current window.
+    last_ema = temp_input[-1][1]
+    
+    # Calculate the new EMA using the exponential moving average formula.
+    new_ema = (pred_close_val - last_ema) * alpha + last_ema
+    
+    # Append the predicted values to our forecast lists.
+    cdsl_future_close.append(pred_close_val)
+    cdsl_future_ema.append(new_ema)
+    
+    # Update the temporary input window:
+    # Remove the oldest element and append the new prediction as a pair [pred_close_val, new_ema].
+    temp_input.append([pred_close_val, new_ema])
+    temp_input = temp_input[1:]
+    
+    # Optionally, print progress:
+    print(f"Iteration {i+1}: Predicted Close: {pred_close_val:.2f}, New EMA: {new_ema:.2f}")
+
+================================================================================================================
