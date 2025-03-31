@@ -3,6 +3,8 @@
 * "PredictValues" class's "getFutureValues" function give both previous &
     future values output.
 
+* "SharePricePrediction" class's "futureSharePrice" function give both
+    previous and future share_price values
 
 ========================== example API Data ==============================
 

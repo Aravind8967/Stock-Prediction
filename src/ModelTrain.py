@@ -114,7 +114,7 @@ class ModelTrain:
         print(f"Test MSE: {test_loss:.4f}, Test MAE: {test_mae:.4f}")
         
         # below command save the model to the current dir
-        model.save(f'{model_name}.keras')
+        model.save(f'Models/{model_name}.keras')
 
         print(f'{model_name} saved to current dir')
         return model
@@ -124,5 +124,5 @@ class ModelTrain:
     
 if __name__ == '__main__':
     c_list = ['ITC', 'ONGC']
-    model = ModelTrain(company_list=c_list, model_name='Aravind_test', price_range='2y')
+    model = ModelTrain(company_list=c_list, model_name='Aravind_test2', price_range='2y')
     print({'get model':model.getModel()})

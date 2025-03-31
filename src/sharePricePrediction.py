@@ -1,5 +1,5 @@
 import datetime
-from .APICall import CompanyDetails
+from APICall import CompanyDetails
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -20,7 +20,7 @@ class SharePricePrediction:
     
     def findModel(self):
         try:
-            self.model = load_model(f'{self.model_name}.keras')
+            self.model = load_model(f'Models/{self.model_name}.keras')
             return self.model
         except (OSError, ValueError) as e:
             print(f"Error loading model '{self.model_name}': {e}")
@@ -102,7 +102,7 @@ class SharePricePrediction:
 
         return future_price_df
     
-    def future_share_price(self, future_years=5):
+    def futureSharePrice(self, future_years=5):
         previous_share_price = self.sharePricePrediction()
         future_share_price = self.futurePricePrediction(future_years=future_years)
         return {
@@ -113,4 +113,5 @@ class SharePricePrediction:
     
 if __name__ == '__main__':
     c_name = 'ITC'
-    future = SharePricePrediction(company_name=c_name, model_name='Aravind_test')
+    future = SharePricePrediction(company_name=c_name, model_name='Aravind_test2')
+    print(future.futureSharePrice())
