@@ -1,58 +1,74 @@
-getting all data from the yfinance 
+=========================== Use of data spliting while training model =============================================================================
+
+1. Purpose of Data Splitting
+
+    Training Set (80%):
+
+        What It Is:
+            The majority of your data used to teach the model.
+
+            Purpose:
+            The model “learns” patterns from this data by adjusting its weights during training.
+
+            Validation Set (10%):
+
+        What It Is:
+            A separate portion of data not used for training.
+
+        Purpose:
+
+            To tune hyperparameters (like learning rate, number of layers, etc.).
+
+            To monitor performance during training (for example, using early stopping).
+
+            To check for overfitting, ensuring the model doesn’t just memorize the training data.
+
+    Test Set (10%):
+
+        What It Is:
+            The final subset, kept completely separate from training and validation.
+
+        Purpose:
+            To evaluate how well the model generalizes to unseen data once training is complete.
+
+2. Why These Specific Splits (80%-10%-10%)?
+    
+    80% Training:
+
+        Provides ample data for the model to learn from, ensuring it captures the underlying trends and patterns.
+
+    10% Validation and 10% Testing:
+
+        These smaller sets are enough to reliably assess the model’s performance and detect overfitting, without reducing the amount of data available for training too much.
+
+3. How These Splits Are Used in Model Training
+    During Training:
+
+        The model is fit on the training set, meaning it updates its parameters based on the errors it makes on this data.
+
+        After each epoch (a complete pass over the training data), the model’s performance is evaluated on the validation set.
+
+        Early stopping and learning rate adjustments often depend on validation performance, helping to prevent overfitting.
+
+    After Training:
+
+        The test set is used to provide an unbiased evaluation of the final model.
+
+        It gives you a realistic picture of how your model might perform on real, unseen data.
 
 
-========================== SBILIFE ==============================
-bussiness : SBI Life Insurance Company Limited operates as a private life insurance company in India. The company's life insurance business comprising individual and group life insurance products, including participating, non-participating, pension, group gratuity, group leave encashment, group superannuation, individual and group immediate annuity, unit-linked and variable insurance products, health, and micro insurance. It also provides accident and disability benefit, level term, and critical illness insurance products. The company offers its products through a multi-channel distribution network comprising individual agents, brokers, corporate agents, bancassurance partners, as well as certified insurance facilitators. It operates various partner branches. 
-The company was incorporated in 2000 and is based in Mumbai, India. SBI Life Insurance Company Limited operates as a subsidiary of State Bank of India.   
-share_price : 1385.55
-change_num : -23.45
-change_percent : -1.69
-c_name : SBI LIFE INSURANCE CO LTD
-c_symbol : SBILIFE
-website : https://www.sbilife.co.in
-marketcap : 138921
-industry : Insurance - Life
-sector : Financial Services
-dates : ['2020', '2021', '2022', '2023', '2024']
-revenue : [0, 821216790000.0, 829112363000.0, 806390392000.0, 1320181286000.0]
-operating_expence : [1, 1, 1, 1, 1]
-net_income : [0, 14558494000.0, 15059977000.0, 17205724000.0, 18937781000.0]
-eps : [0, 14.56, 15.06, 17.19, 18.92]
-pe : 57.47
-pb : 8.36
-profit_margin : [0, 1.77, 1.82, 2.13, 1.43]
-total_debt : 0
-shareholders_equity : [0, 104004364000.0, 116223124000.0, 130174821000.0, 149085606000.0]
-total_assets : [0, 2268304381000.0, 2733369888000.0, 3145991696000.0, 3982988094000.0]
-total_liabilities : [0, 2164300017000.0, 2617146764000.0, 3015816875000.0, 3833902488000.0]
-cash_equivalents : [0, 12126538000.0, 10318870000.0, 15912241000.0, 47406289000.0]
-roe : [0, 14.0, 12.96, 13.22, 12.7]
-free_cashflow : [0, 237731236000.0, 217961479000.0, 285928447000.0, 290074735000.0]
-operating_cashflow : [1, 1, 1, 1, 1]
-investing_cashflow : [0, -192027068000.0, -216110104000.0, -302030006000.0, -312213323000.0]
-financing_cashflow : [0, 26492000.0, -2310096000.0, -4150950000.0, -2273238000.0]
-holding : [56.89, 29.06, 14.05]
-targetprice : 2500.0
-fifty2_week_low : 1307.7
-fifty2_week_high : 1936.0
-divident_yield : 19.0
-bookvalue : 165.74
-earning_growth : 71.0
-revenue_growth : -51.7
-total_cash : 41527
-total_revenue : 1301241
-day_low : 1382.65
-day_high : 1413.95
-line_data : {'support1': 1359.37, 'support2': 1288.23, 'support3': 1132.78, 'resistance1': 1514.82, 'resistance2': 1599.13, 'resistance3': 1754.58}       
-indicator_data : {'summary': 'SELL', 'rsi': 'NEUTRAL', 'adx': 'NEUTRAL', 'momentum': 'SELL', 'macd': 'SELL', 'bbp': 'NEUTRAL'}
-===================================================================
+Summary
+
+    Training Set (80%): Used to learn the model.
+
+    Validation Set (10%): Used to tune the model and monitor performance.
+
+    Test Set (10%): Used for final evaluation of how the model generalizes.
+
+By using these splits, you ensure that your model is robust, not overfitting the training data, and performs well on new, unseen data.
 
 
-=========================== Need to consider below values into website =============================================================================
 
-revenue
-income
-eps
-roe
-operating_expence
-profit_margin
+
+
+

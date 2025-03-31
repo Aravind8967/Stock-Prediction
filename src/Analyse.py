@@ -1,38 +1,17 @@
 from .APICall import CompanyDetails
 from .FindValues import FindValues
 from .PredictValues import PredictValues
+from .sharePricePrediction import SharePricePrediction
 
 
 class Analyse:
     def __init__(self, c_name):
         self.c_name = c_name
-        self.company_details = CompanyDetails(self.c_name)
+        self.company_details = SharePricePrediction(self.c_name)
         self.predict_values = PredictValues(self.c_name)
-        self.future_revenue_income = self.predict_values.futureRevenueIncome()
 
-    def getAPIValues(self):
-        revenue_income = self.company_details.getRevenueIncome()
-        return {
-            'years':revenue_income['years'],
-            'revenue':revenue_income['revenue'],
-            'income':revenue_income['income']
-        }
-    
-    def RevenueIncomeAnalyse(self):
-        return {
-            'p_years': self.future_revenue_income['p_years'],
-            'p_revenue' : self.future_revenue_income['p_revenue'],
-            'p_income' : self.future_revenue_income['p_income'],
-            'years' : self.future_revenue_income['years'],
-            'revenue' : self.future_revenue_income['revenue'],
-            'income' : self.future_revenue_income['income']
-        }
-    
-    def ROEAnalyse(self):
-        prev_roe = self.company_details.roe(self.future_revenue_income['p_income'], self.future_revenue_income)
-        
-
-
+    def values(self):
+        return self.predict_values.getFutureValues(10)
 
 if __name__ == '__main__':
     c_name = 'ITC'

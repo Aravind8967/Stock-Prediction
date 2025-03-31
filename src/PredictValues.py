@@ -1,9 +1,9 @@
 import os
+import random
 import numpy as np
-from .APICall import CompanyDetails
 from .FindValues import FindValues
-from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import LSTM, Dense
+from keras.models import Sequential, load_model
+from keras.layers import LSTM, Dense
 
 class PredictValues:
     def __init__(self, c_name):
@@ -71,6 +71,15 @@ class PredictValues:
             current_year += 1
 
         return future_revenue_arr
+    
+    def getfutureSharePrice(self, eps_arr):
+        pe = self.get_company_details['pe']
+        if pe <= 0:
+            pe = 3
+        share_price = []
+        for eps in eps_arr:
+            share_price.append(round(eps * random.randint(pe, pe+5), 2))
+        return share_price
 
     def getFutureIncomeValues(self, x_input, future_year=5):
         x_input = np.array(x_input)
@@ -95,7 +104,7 @@ class PredictValues:
             current_year += 1
 
         return future_income_arr
-    
+
     def getFutureValues(self, future_year=5):
         future_revenue = self.getFutureRevenueValues(self.get_company_details['revenue'][-3:], future_year)
         future_income = self.getFutureIncomeValues(self.get_company_details['income'][-3:], future_year)
@@ -103,8 +112,8 @@ class PredictValues:
         future_values['future_years'] = self.future_years_arr
         future_values['future_revenue'] = future_revenue
         future_values['future_income'] = future_income
+        future_values['future_eps'] = self.find_values.findEPS(future_income)
         future_values['future_roe'] = self.find_values.findROE(future_income)
         future_values['future_opm'] = self.find_values.findOPM(future_revenue, future_income)
-        future_values['future_eps'] = self.find_values.findEPS(future_income)
-    
+        future_values['future_price'] = self.getfutureSharePrice(future_values['future_eps'])
         return future_values

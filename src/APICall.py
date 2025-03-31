@@ -67,7 +67,9 @@ class CompanyDetails:
         share_price_df = share_price_df.reset_index()
         share_price_df['Date'] = share_price_df['Date'].dt.strftime('%Y-%m-%d')
         share_price_df['Close'] = share_price_df['Close'].round(2)
-        filtered_data = share_price_df[['Date', 'Close']]
+        share_price_df['ema100'] = share_price_df['Close'].ewm(span=100, adjust=False).mean()
+        share_price_df['ema200'] = share_price_df['Close'].ewm(span=200, adjust=False).mean()
+        filtered_data = share_price_df[['Date', 'Close', 'ema100', 'ema200']]
         return filtered_data       
 
     def getNearSharePrice(self, date):
@@ -94,19 +96,6 @@ class CompanyDetails:
             else:
                 roe.append(0)
         return roe
-
-    def pe(self, eps):
-        dates = self.yf_api_fetch.income_stmt.columns
-        dates = [date.strftime('%Y-%m-%d') for date in dates][::-1]
-        
-        shareprice_arr = [self.getNearSharePrice(shareprice) for shareprice in dates]
-        pe = []
-        for shares, price in zip(shareprice_arr, eps):
-            if price != 0:
-                pe.append(shares / price)
-            else:
-                pe.append(0)
-        return pe
     
     def getRevenueIncome(self):
         income = self.yf_api_fetch.income_stmt
@@ -137,6 +126,8 @@ class CompanyDetails:
     
         return data
     
+    def findPE(self, share_price, eps):
+        return int(share_price / eps)
 
     def companyDetails(self):
         company_info = self.company_info
@@ -217,6 +208,7 @@ class CompanyDetails:
             'revenue' : val_to_crore(revenue),
             'income' : val_to_crore(net_income),
             'eps' : eps,
+            'pe' : self.findPE(self.sharePrice(), eps[-1]),
             'roe' : roe,
             'operating_expence' : val_to_crore(operating_expence),
             'profit_margin' : profit_margin,
