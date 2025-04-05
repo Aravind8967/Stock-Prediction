@@ -7,3 +7,5 @@ pandas
 requests
 tradingview-ta
 matplotlib
+mysql-connector-python
+python-dotenv
