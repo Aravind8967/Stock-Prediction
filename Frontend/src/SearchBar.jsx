@@ -3,6 +3,7 @@ import { Form, FormControl, Button, Table, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import './SearchBar.css'
 
 const host = 'http://localhost:83'
 

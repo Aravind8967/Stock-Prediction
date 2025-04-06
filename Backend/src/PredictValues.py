@@ -107,6 +107,7 @@ class PredictValues:
 
     def npToval(self, arr):
         return [round(float(val), 2) for val in arr]
+    
 
     def getFutureValues(self, future_year=5):
         future_revenue = self.getFutureRevenueValues(self.get_company_details['revenue'][-3:], future_year)
