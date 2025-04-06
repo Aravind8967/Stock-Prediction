@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 import { Chart } from "react-google-charts";
 import './Chart.css';
+import './Chart.css';
 import axios from "axios";
 import { createChart, ColorType, AreaSeries } from 'lightweight-charts';
 
@@ -66,23 +67,66 @@ const ChartComponent = props => {
     );
 };
 
-function RevenueChart({ years, revenue }) {
+function RevenueChart({ c_symbol, years, revenue }) {
     const data = [["Year", "Revenue"]];
     if (years && revenue && revenue.length === years.length) {
         for (let i = 0; i < years.length; i++) {
             data.push([String(years[i]), revenue[i]]);
         }
         const options = {
-            title: "Revenue Over Years",
-            subtitle: "Company's Revenue Trend",
+            title: `${c_symbol} Revenue Growth`,
+            titleTextStyle: {
+                color: 'white',  // Change the axis title color (red here)
+                fontSize: 15
+            },
+            vAxis: {
+                gridlines: { color: 'none' },
+                format: 'short',
+                textStyle: {
+                    color: 'white'
+                }
+            },
+            hAxis: {
+                gridlines: { color: 'white' },
+                textStyle: {
+                    color: 'white'
+                }
+            },
+            colors: ['rgb(62, 178, 36)', 'rgb(255, 255, 51)'],
+            curveType: 'function',
+            legend: {
+                position: 'bottom',
+                textStyle: {
+                    color: 'white'
+                }
+            },
             backgroundColor: 'transparent',
-            chartArea: { backgroundColor: 'transparent' },
-        };
+            chartArea: {
+                left: 50,         // Reduces space on the left (adjust value as needed)
+                right: 10,        // Reduces space on the right (adjust value as needed)
+                top: 50,          // Adjust the top margin (for title)
+                bottom: 50,       // Adjust space at the bottom
+                width: '80%',     // Adjust the chart width within the container
+                height: '50%'     // Adjust the chart height within the container
+            },
+            tooltip: {
+                isHtml: true,  // Enable HTML tooltips for more customization
+                trigger: 'focus'  // Show the tooltip for all companies when hovering over a single year
+            },
+
+            // Focus on column data, no crosshair lines
+            focusTarget: 'category', // This shows all data for a year when hovering over that year
+
+            // Column width increase
+            pointSize: 7, // Make points slightly larger
+            interpolateNulls: true
+
+        }
         return (
             <Chart
-                chartType="Line"
+                chartType='LineChart'
                 width="100%"
-                height="300px"
+                height="30rem"
                 data={data}
                 options={options}
             />
@@ -91,23 +135,66 @@ function RevenueChart({ years, revenue }) {
     return <p>No Revenue data available.</p>;
 }
 
-function IncomeChart({ years, income }) {
+function IncomeChart({ c_symbol, years, income }) {
     const data = [["Year", "Income"]];
     if (years && income && income.length === years.length) {
         for (let i = 0; i < years.length; i++) {
             data.push([String(years[i]), income[i]]);
         }
         const options = {
-            title: "Income Over Years",
-            subtitle: "Company's Income Trend",
+            title: `${c_symbol} Income Growth`,
+            titleTextStyle: {
+                color: 'white',  // Change the axis title color (red here)
+                fontSize: 15
+            },
+            vAxis: {
+                gridlines: { color: 'none' },
+                format: 'short',
+                textStyle: {
+                    color: 'white'
+                }
+            },
+            hAxis: {
+                gridlines: { color: 'white' },
+                textStyle: {
+                    color: 'white'
+                }
+            },
+            colors: ['rgb(62, 178, 36)'],
+            curveType: 'function',
+            legend: {
+                position: 'bottom',
+                textStyle: {
+                    color: 'white'
+                }
+            },
             backgroundColor: 'transparent',
-            chartArea: { backgroundColor: 'transparent' },
-        };
+            chartArea: {
+                left: 50,         // Reduces space on the left (adjust value as needed)
+                right: 10,        // Reduces space on the right (adjust value as needed)
+                top: 50,          // Adjust the top margin (for title)
+                bottom: 50,       // Adjust space at the bottom
+                width: '80%',     // Adjust the chart width within the container
+                height: '50%'     // Adjust the chart height within the container
+            },
+            tooltip: {
+                isHtml: true,  // Enable HTML tooltips for more customization
+                trigger: 'focus'  // Show the tooltip for all companies when hovering over a single year
+            },
+
+            // Focus on column data, no crosshair lines
+            focusTarget: 'category', // This shows all data for a year when hovering over that year
+
+            // Column width increase
+            pointSize: 7, // Make points slightly larger
+            interpolateNulls: true
+
+        }
         return (
             <Chart
-                chartType="Line"
+                chartType='LineChart'
                 width="100%"
-                height="300px"
+                height="30rem"
                 data={data}
                 options={options}
             />
@@ -116,23 +203,66 @@ function IncomeChart({ years, income }) {
     return <p>No Income data available.</p>;
 }
 
-function EPSChart({ years, eps }) {
+function EPSChart({ c_symbol, years, eps }) {
     const data = [["Year", "EPS"]];
     if (years && eps && eps.length === years.length) {
         for (let i = 0; i < years.length; i++) {
             data.push([String(years[i]), eps[i]]);
         }
         const options = {
-            title: "EPS Over Years",
-            subtitle: "Company's EPS Trend",
+            title: `${c_symbol} EPS Growth`,
+            titleTextStyle: {
+                color: 'white',  // Change the axis title color (red here)
+                fontSize: 15
+            },
+            vAxis: {
+                gridlines: { color: 'none' },
+                format: 'short',
+                textStyle: {
+                    color: 'white'
+                }
+            },
+            hAxis: {
+                gridlines: { color: 'white' },
+                textStyle: {
+                    color: 'white'
+                }
+            },
+            colors: ['rgb(62, 178, 36)'],
+            curveType: 'function',
+            legend: {
+                position: 'bottom',
+                textStyle: {
+                    color: 'white'
+                }
+            },
             backgroundColor: 'transparent',
-            chartArea: { backgroundColor: 'transparent' },
-        };
+            chartArea: {
+                left: 50,         // Reduces space on the left (adjust value as needed)
+                right: 10,        // Reduces space on the right (adjust value as needed)
+                top: 50,          // Adjust the top margin (for title)
+                bottom: 50,       // Adjust space at the bottom
+                width: '80%',     // Adjust the chart width within the container
+                height: '50%'     // Adjust the chart height within the container
+            },
+            tooltip: {
+                isHtml: true,  // Enable HTML tooltips for more customization
+                trigger: 'focus'  // Show the tooltip for all companies when hovering over a single year
+            },
+
+            // Focus on column data, no crosshair lines
+            focusTarget: 'category', // This shows all data for a year when hovering over that year
+
+            // Column width increase
+            pointSize: 7, // Make points slightly larger
+            interpolateNulls: true
+
+        }
         return (
             <Chart
-                chartType="Line"
+                chartType='LineChart'
                 width="100%"
-                height="300px"
+                height="30rem"
                 data={data}
                 options={options}
             />
@@ -141,23 +271,66 @@ function EPSChart({ years, eps }) {
     return <p>No EPS data available.</p>;
 }
 
-function ROEChart({ years, roe }) {
+function ROEChart({ c_symbol, years, roe }) {
     const data = [["Year", "ROE"]];
     if (years && roe && roe.length === years.length) {
         for (let i = 0; i < years.length; i++) {
             data.push([String(years[i]), roe[i]]);
         }
         const options = {
-            title: "ROE Over Years",
-            subtitle: "Company's ROE Trend",
+            title: `${c_symbol} ROE Growth`,
+            titleTextStyle: {
+                color: 'white',  // Change the axis title color (red here)
+                fontSize: 15
+            },
+            vAxis: {
+                gridlines: { color: 'none' },
+                format: 'short',
+                textStyle: {
+                    color: 'white'
+                }
+            },
+            hAxis: {
+                gridlines: { color: 'white' },
+                textStyle: {
+                    color: 'white'
+                }
+            },
+            colors: ['rgb(62, 178, 36)', 'rgb(255, 255, 51)'],
+            curveType: 'function',
+            legend: {
+                position: 'bottom',
+                textStyle: {
+                    color: 'white'
+                }
+            },
             backgroundColor: 'transparent',
-            chartArea: { backgroundColor: 'transparent' },
-        };
+            chartArea: {
+                left: 50,         // Reduces space on the left (adjust value as needed)
+                right: 10,        // Reduces space on the right (adjust value as needed)
+                top: 50,          // Adjust the top margin (for title)
+                bottom: 50,       // Adjust space at the bottom
+                width: '80%',     // Adjust the chart width within the container
+                height: '50%'     // Adjust the chart height within the container
+            },
+            tooltip: {
+                isHtml: true,  // Enable HTML tooltips for more customization
+                trigger: 'focus'  // Show the tooltip for all companies when hovering over a single year
+            },
+
+            // Focus on column data, no crosshair lines
+            focusTarget: 'category', // This shows all data for a year when hovering over that year
+
+            // Column width increase
+            pointSize: 7, // Make points slightly larger
+            interpolateNulls: true
+
+        }
         return (
             <Chart
-                chartType="Line"
+                chartType='LineChart'
                 width="100%"
-                height="300px"
+                height="30rem"
                 data={data}
                 options={options}
             />
@@ -166,12 +339,14 @@ function ROEChart({ years, roe }) {
     return <p>No ROE data available.</p>;
 }
 
-export function ChartSection() {
+export function ChartSection({ companySymbol }) {
+    if (companySymbol === undefined) {
+        return
+    }
     const [fundamentalData, setFundamentalData] = useState(null);
     const [sharePriceData, setSharePriceData] = useState(null);
     const [isSharePriceLoading, setIsSharePriceLoading] = useState(false);
     const [sharePriceError, setSharePriceError] = useState(null);
-    const companySymbol = 'ITC';
 
     useEffect(() => {
         const fetchFundamentals = async () => {
@@ -217,9 +392,9 @@ export function ChartSection() {
             <Row className="ChartRow">
                 <Col className="ChartCol">
                     <div>
-                        <h2>Revenue</h2>
                         {fundamentalData && fundamentalData.years && fundamentalData.revenue ? (
                             <RevenueChart
+                                c_symbol={companySymbol}
                                 years={fundamentalData.years}
                                 revenue={fundamentalData.revenue}
                             />
@@ -230,9 +405,9 @@ export function ChartSection() {
                 </Col>
                 <Col className="ChartCol">
                     <div>
-                        <h2>Income</h2>
                         {fundamentalData && fundamentalData.years && fundamentalData.income ? (
                             <IncomeChart
+                                c_symbol={companySymbol}
                                 years={fundamentalData.years}
                                 income={fundamentalData.income}
                             />
@@ -245,9 +420,9 @@ export function ChartSection() {
             <Row className="ChartRow">
                 <Col className="ChartCol">
                     <div>
-                        <h2>EPS</h2>
                         {fundamentalData && fundamentalData.years && fundamentalData.eps ? (
                             <EPSChart
+                                c_symbol={companySymbol}
                                 years={fundamentalData.years}
                                 eps={fundamentalData.eps}
                             />
@@ -258,9 +433,9 @@ export function ChartSection() {
                 </Col>
                 <Col className="ChartCol">
                     <div>
-                        <h2>ROE</h2>
                         {fundamentalData && fundamentalData.years && fundamentalData.roe ? (
                             <ROEChart
+                                c_symbol={companySymbol}
                                 years={fundamentalData.years}
                                 roe={fundamentalData.roe}
                             />

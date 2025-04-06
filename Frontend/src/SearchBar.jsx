@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, FormControl, Button, Table, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { ChartSection } from "./Chart";
 import axios from "axios";
 import './SearchBar.css'
 
@@ -50,7 +51,7 @@ export function SearchBar() {
 
     return (
         <div>
-            <Form className="d-flex align-items-center">
+            <Form className="d-flex align-items-center" style={{ position: 'relative' }}>
                 <FormControl
                     type="text"
                     placeholder="Enter Company Name"
@@ -61,21 +62,24 @@ export function SearchBar() {
                 <Button variant="outline-success" onClick={handleSearchClick} disabled={loading}>
                     {loading ? <Spinner animation="border" size="sm" /> : <FontAwesomeIcon icon={faSearch} />}
                 </Button>
+
+                {suggestions.length > 0 && (
+                    <Table className="table-suggestion">
+                        <tbody>
+                            {suggestions.map((suggestion, index) => (
+                                <tr key={index} onMouseDown={() => handleSuggestionClick(suggestion)}>
+                                    <td>{suggestion}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                )}
             </Form>
 
-            {suggestions.length > 0 && (
-                <Table className="table-suggestion">
-                    <tbody>
-                        {suggestions.map((suggestion, index) => (
-                            <tr key={index} onMouseDown={() => handleSuggestionClick(suggestion)}>
-                                <td>{suggestion}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
-            )}
-
-            {searchResults && (
+            <SearchResults 
+                SearchData={searchResults}
+            />
+            {/* {searchResults && (
                 <div className="mt-3">
                     <h3>Search Results:</h3>
                     {searchResults.status === 200 ? (
@@ -89,7 +93,21 @@ export function SearchBar() {
                         <p>{searchResults.data}</p>
                     )}
                 </div>
-            )}
+            )} */}
         </div>
     );
+}
+
+function SearchResults({ SearchData }){
+    if(SearchData === null){
+        return
+    }
+    else{
+        var c_symbol = SearchData['data'][0].c_symbol
+        return(
+            <ChartSection 
+                companySymbol={c_symbol}
+            />
+        );
+    }
 }
