@@ -1,0 +1,341 @@
+=================================== Model 1 =================================================
+(file_name = chat_gpt.ipynb)
+
+model = Sequential([
+    LSTM(50, activation='relu', input_shape=(window_size, 1)),
+    Dense(1)  # Output layer: one predicted value (regression uses linear activation by default)
+])
+
+model.compile(optimizer='adam', loss='mean_squared_error')
+model.summary()
+
+
+=================================== Model 2 =================================================
+(file_name = greec_hogg.ipynb)
+
+model = Sequential([layers.Input((3, 1)),
+                    layers.LSTM(64),
+                    layers.Dense(32, activation='relu'),
+                    layers.Dense(32, activation='relu'),
+                    layers.Dense(1)])
+
+model.compile(loss='mse', 
+              optimizer=Adam(learning_rate=0.001),
+              metrics=['mean_absolute_error'])
+
+model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=100)
+
+============================================================================================
+
+=================================== Model 2 =================================================
+(file_name = krish_code.ipynb)
+
+model = Sequential()
+model.add(LSTM(50, activation='relu', return_sequences=True, input_shape=(n_steps, n_features)))
+model.add(LSTM(50, activation='relu'))
+model.add(Dense(1))
+model.compile(optimizer='adam', loss='mse')
+model.fit(X, y, epochs=300, verbose=1)
+
+=============================================================================================
+
+=================================== Model 3 =================================================
+(file_name = predict_revenue.ipynb)
+
+model = Sequential()
+model.add(LSTM(50, activation='relu', return_sequences=True, input_shape=(n_steps, n_feature)))
+model.add(LSTM(50, activation='relu'))
+model.add(Dense(1))
+model.compile(optimizer='adam', loss='mse')
+
+model.fit(x,y, epochs = 400, verbose=1)
+
+=============================================================================================
+
+=================================== Model 4 =================================================
+(file_name = revenue_prediction_test1.ipynb)
+
+def model_training(x_data, y_data, n_steps, n_feature):
+    model = Sequential()
+    model.add(LSTM(50, activation='relu', return_sequences=True, input_shape=(n_steps, n_feature)))
+    model.add(LSTM(50, activation='relu'))
+    model.add(Dense(1))
+    model.compile(optimizer='adam', loss='mse')
+
+    model.fit(x_data, y_data, epochs=300, verbose=1)
+    return model
+
+=============================================================================================
+
+=================================== Model 5 =================================================
+(file_name = stock_predection.ipynb)
+
+model = Sequential([layers.Input((3, 1)),
+                    layers.LSTM(64),
+                    layers.Dense(32, activation='relu'),
+                    layers.Dense(32, activation='relu'),
+                    layers.Dense(1)])
+
+model.compile(loss='mse', 
+              optimizer=Adam(learning_rate=0.001),
+              metrics=['mean_absolute_error'])
+
+model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=100)
+
+=============================================================================================
+
+=================================== Model 6 =================================================
+(file_name = sharePricePrediction.py)
+
+def model_train(self, x_train, y_train, x_valid, y_valid, window_size):
+    model = Sequential([Input((window_size, 1)),
+                        LSTM(64),
+                        Dense(32,activation='relu'),
+                        Dense(32, activation='relu'),
+                        Dense(1)])
+    
+    model.compile(loss='mse',
+                    optimizer=Adam(learning_rate=0.001),
+                    metrics=['mean_absolute_error'])
+
+    model.fit(x_train, y_train, validation_data=(x_valid, y_valid), epochs=100)
+    
+    return model
+
+=============================================================================================
+
+=================================== Model 7 =================================================
+(ChatGPT built)
+
+def model_train(self, x_train, y_train, x_valid, y_valid, window_size):
+
+    # Build the Sequential model with dynamic input shape based on window_size.
+    model = Sequential([
+        # Input layer: expects sequences with 'window_size' timesteps and 1 feature per timestep.
+        Input((window_size, 1)),
+        
+        # First LSTM layer with 64 units. Return sequences to feed into a second LSTM.
+        LSTM(64, return_sequences=True),
+        
+        # Dropout layer to reduce overfitting by randomly setting 20% of inputs to 0.
+        Dropout(0.2),
+        
+        # Second LSTM layer with 32 units; it does not return sequences as it outputs a fixed vector.
+        LSTM(32),
+        
+        # Another Dropout layer for regularization.
+        Dropout(0.2),
+        
+        # Dense layer with 32 neurons and ReLU activation for non-linear transformation.
+        Dense(32, activation='relu'),
+        
+        # Final Dense layer with 1 neuron (linear activation by default) for continuous value prediction.
+        Dense(1)
+    ])
+
+    # Optimizer: Adam with an initial learning rate.
+    optimizer = Adam(learning_rate=0.001)
+
+    # Compile the model using Mean Squared Error loss (common in regression) and track MAE.
+    model.compile(loss='mse', optimizer=optimizer, metrics=['mean_absolute_error'])
+
+    # Early stopping callback: stops training if the validation loss does not improve for 10 epochs.
+    early_stop = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    
+    # Learning rate scheduler: reduces the learning rate by a factor of 0.5 if no improvement in 5 epochs.
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-6)
+
+    # Train the model. The 'validation_data' helps monitor performance on unseen data.
+    model.fit(
+        x_train, y_train,
+        validation_data=(x_valid, y_valid),
+        epochs=100,
+        callbacks=[early_stop, reduce_lr]
+    )
+    
+    return model
+
+=============================================================================================
+
+=================================== Model 8 =================================================
+(Gemini built)
+
+def model_train(self, x_train, y_train, x_valid, y_valid, window_size):
+    model = Sequential([
+        # Input layer: expects sequences with 'window_size' timesteps and 1 feature per timestep.
+        Input((window_size, 1)),
+
+        # Convolutional Layer: helps to extract local patterns.
+        Conv1D(filters=64, kernel_size=3, activation='relu'),
+        MaxPooling1D(pool_size=2),
+
+        # Bidirectional LSTM Layer: captures patterns from both past and future.
+        Bidirectional(LSTM(128, return_sequences=True)),
+        BatchNormalization(),
+        Dropout(0.3),
+
+        # Second Bidirectional LSTM Layer.
+        Bidirectional(LSTM(128, return_sequences=True)),
+        BatchNormalization(),
+        Dropout(0.3),
+
+        # Third LSTM or fully connected layer, to reduce the dimensions.
+        LSTM(64),
+        BatchNormalization(),
+        Dropout(0.3),
+
+        # Dense layer with 64 neurons and ReLU activation.
+        Dense(64, activation='relu'),
+        BatchNormalization(),
+        Dropout(0.2),
+
+        # Final Dense layer with 1 neuron for continuous value prediction.
+        Dense(1)
+    ])
+    # Optimizer: Adam with an initial learning rate.
+    optimizer = Adam(learning_rate=0.0005)
+
+    # Compile the model using Mean Squared Error loss (common in regression) and track MAE.
+    model.compile(loss='mse', optimizer=optimizer, metrics=['mean_absolute_error'])
+
+    # Early stopping callback: stops training if the validation loss does not improve for 10 epochs.
+    early_stop = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
+    
+    # Learning rate scheduler: reduces the learning rate by a factor of 0.5 if no improvement in 5 epochs.
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.3, patience=10, min_lr=1e-7)
+
+    # Train the model. The 'validation_data' helps monitor performance on unseen data.
+    model.fit(
+        x_train, y_train,
+        validation_data=(x_valid, y_valid),
+        epochs=100,
+        batch_size=32,
+        callbacks=[early_stop, reduce_lr]
+    )
+    
+    return model
+
+=============================================================================================
+
+=================================== Model 8 =================================================
+(file_name = chando_stock_prediction.ipynb)
+
+model = Sequential()
+
+model.add(LSTM(units = 50, activation = 'relu', return_sequences = True, input_shape = (x_train.shape[1],1)))
+model.add(Dropout(0.2))
+
+model.add(LSTM(units = 60, activation = 'relu', return_sequences = True))
+model.add(Dropout(0.3))
+
+model.add(LSTM(units = 80, activation = 'relu', return_sequences = True))
+model.add(Dropout(0.4))
+
+model.add(LSTM(units = 120, activation = 'relu'))
+model.add(Dropout(0.5))
+
+model.add(Dense(units = 1))
+
+=============================================================================================
+
+=================================== Model 9 =================================================
+
+def train_model(X, y, window_size=5):
+    """
+    Build, compile, and train an LSTM model on the combined dataset.
+    Returns the trained model.
+    """
+    # Split into train (80%), val (10%), test (10%) - or any ratio you prefer
+    num_samples = len(X)
+    train_end = int(num_samples * 0.8)
+    val_end   = int(num_samples * 0.9)
+    
+    X_train, y_train = X[:train_end], y[:train_end]
+    X_val,   y_val   = X[train_end:val_end], y[train_end:val_end]
+    X_test,  y_test  = X[val_end:], y[val_end:]
+    
+    # Build LSTM model
+    model = Sequential([
+        Input(shape=(window_size, 2)),  # 2 features: Close, EMA200
+        LSTM(64),
+        Dense(32, activation='relu'),
+        Dense(1)  # predict next day's Close
+    ])
+    
+    model.compile(
+        loss='mse',
+        optimizer=Adam(learning_rate=0.001),
+        metrics=['mae']
+    )
+    
+    # Train
+    model.fit(
+        X_train, y_train,
+        validation_data=(X_val, y_val),
+        epochs=50,
+        batch_size=32
+    )
+    
+    # Evaluate on test set (optional, just to see performance)
+    test_loss, test_mae = model.evaluate(X_test, y_test)
+    print(f"Test MSE: {test_loss:.4f}, Test MAE: {test_mae:.4f}")
+    
+    return model
+
+=============================================================================================
+
+=================================== model_1.h5 =================================================
+(model_trained with below architeture)
+
+c_list = ['RELIANCE','HDFCBANK','ICICIBANK', 'INFY']
+
+def train_model(X, y, window_size=5):
+    """
+    Build, compile, and train an LSTM model on the combined dataset.
+    Returns the trained model.
+    """
+    # Split into train (80%), val (10%), test (10%) - or any ratio you prefer
+    num_samples = len(X)
+    train_end = int(num_samples * 0.8)
+    val_end   = int(num_samples * 0.9)
+    
+    X_train, y_train = X[:train_end], y[:train_end]
+    X_val,   y_val   = X[train_end:val_end], y[train_end:val_end]
+    X_test,  y_test  = X[val_end:], y[val_end:]
+    
+    # Build LSTM model
+    model = Sequential([
+        Input(shape=(window_size, 2)),  # 2 features: Close, EMA200
+        LSTM(64),
+        Dense(32, activation='relu'),
+        Dense(32, activation='relu'),
+        Dense(1)  # predict next day's Close
+    ])
+    
+    model.compile(
+        loss='mse',
+        optimizer=Adam(learning_rate=0.001),
+        metrics=['mae']
+    )
+    
+    # Train
+    model.fit(
+        X_train, y_train,
+        validation_data=(X_val, y_val),
+        epochs=100,
+        batch_size=32
+    )
+    
+    # Evaluate on test set (optional, just to see performance)
+    test_loss, test_mae = model.evaluate(X_test, y_test)
+    print(f"Test MSE: {test_loss:.4f}, Test MAE: {test_mae:.4f}")
+    
+    return model
+
+
+=============================================================================================
+
+=================================== model_2.h5 =================================================
+(model_trained with below architeture)
+
+c_list = []
