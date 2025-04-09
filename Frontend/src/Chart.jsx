@@ -4,66 +4,120 @@ import { Chart } from "react-google-charts";
 import './Chart.css';
 import './Chart.css';
 import axios from "axios";
-import { createChart, ColorType, AreaSeries } from 'lightweight-charts';
+import { createChart, AreaSeries, LineSeries } from 'lightweight-charts';
 
 const host = 'http://localhost:83';
 
-const ChartComponent = props => {
-    const {
-        data,
-        colors: {
-            backgroundColor = 'black',
-            lineColor = '#2962FF',
-            textColor = 'white',
-            areaTopColor = '#2962FF',
-            areaBottomColor = 'rgba(41, 98, 255, 0.28)',
-        } = {},
-    } = props;
+const ChartComponent = ({ data, c_symbol }) => {
+    const chartContainerRef = useRef(null);
+    const toolTipRef = useRef(null);
 
-    const chartContainerRef = useRef();
-    const chart = useRef(null);
+    // const defaultData = data?.data || [];
+    const defaultData = data || [];
+
+    console.log(defaultData);
+    console.log(c_symbol);
 
     useEffect(() => {
-        const container = chartContainerRef.current;
-        if (!container || !Array.isArray(data) || data.length === 0) {
-            return;
-        }
-
-        const handleResize = () => {
-            if (chart.current) {
-                chart.current.applyOptions({ width: container.clientWidth });
-            }
-        };
-
-        chart.current = createChart(container, {
+        const chart = createChart(chartContainerRef.current, {
+            width: chartContainerRef.current.clientWidth,
+            height: 630,
             layout: {
-                background: { type: ColorType.Solid, color: backgroundColor },
-                textColor,
+                background: { color: '#000000' },
+                textColor: '#ffffff',
             },
-            width: container.clientWidth,
-            height: 300,
+            grid: {
+                vertLines: { color: '#444' },
+                horzLines: { color: '#444' },
+            },
+            crosshair: {
+                mode: 0,
+            },
+            timeScale: {
+                timeVisible: true,
+                secondsVisible: false,
+            },
         });
-        chart.current.timeScale().fitContent();
 
-        const newSeries = chart.current.addSeries(AreaSeries, { lineColor, topColor: areaTopColor, bottomColor: areaBottomColor });
-        newSeries.setData(data);
+        const closeSeries = chart.addSeries(AreaSeries, { color: 'blue', lineWidth: 2 });
+        const ema100Series = chart.addSeries(LineSeries, { color: 'orange', lineWidth: 1 });
+        const ema200Series = chart.addSeries(LineSeries, { color: 'red', lineWidth: 1 });
 
-        window.addEventListener('resize', handleResize);
+        const closeData = defaultData.map(item => ({ time: item.Date, value: item.Close }));
+        const ema100Data = defaultData.map(item => ({ time: item.Date, value: item.ema100 }));
+        const ema200Data = defaultData.map(item => ({ time: item.Date, value: item.ema200 }));
+
+        closeSeries.setData(closeData);
+        ema100Series.setData(ema100Data);
+        ema200Series.setData(ema200Data);
+
+        // Tooltip
+        const toolTip = document.createElement('div');
+        toolTipRef.current = toolTip;
+        const toolTipWidth = 110;
+
+        toolTip.style = `
+        width: ${toolTipWidth}px;
+        position: absolute;
+        display: none;
+        padding: 8px;
+        box-sizing: border-box;
+        font-size: 12px;
+        text-align: left;
+        z-index: 1000;
+        pointer-events: none;
+        border-radius: 4px 4px 0px 0px;
+        box-shadow: 0 2px 5px 0 rgba(117, 134, 150, 0.45);
+        font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
+        background: rgba(0, 0, 0, 0.25);
+        color: white;
+        border: 1px solid rgb(0, 255, 98);
+      `;
+        chartContainerRef.current.appendChild(toolTip);
+
+        chart.subscribeCrosshairMove(param => {
+            if (
+                !param.time ||
+                param.point.x < 0 ||
+                param.point.x > chartContainerRef.current.clientWidth ||
+                param.point.y < 0 ||
+                param.point.y > chartContainerRef.current.clientHeight
+            ) {
+                toolTip.style.display = 'none';
+                return;
+            }
+
+            const dateStr = param.time;
+            const data = param.seriesData.get(closeSeries);
+            const price = data?.value !== undefined ? data.value : data?.close;
+
+            if (price === undefined) return;
+
+            toolTip.innerHTML = `
+                <div style="color: rgb(9, 255, 0)">${c_symbol}</div>
+                <div style="font-size: 24px; margin: 4px 0; color: white;">${price.toFixed(2)}</div>
+                <div style="color: white;">${dateStr}</div>
+            `;
+            toolTip.style.display = 'block';
+
+            let left = param.point.x - toolTipWidth / 2;
+            left = Math.max(0, Math.min(left, chartContainerRef.current.clientWidth - toolTipWidth));
+            toolTip.style.left = `${left}px`;
+            toolTip.style.top = `95rem`;
+        });
 
         return () => {
-            window.removeEventListener('resize', handleResize);
-            if (chart.current) {
-                chart.current.remove();
-                chart.current = null;
-            }
+            chart.remove();
         };
-    }, [data, backgroundColor, lineColor, textColor, areaTopColor, areaBottomColor]);
+    }, []);
 
     return (
-        <div
-            ref={chartContainerRef}
-            style={{ width: '100%', height: '300px' }}
-        />
+        <div>
+            <div
+                ref={chartContainerRef}
+                id="container"
+            />
+        </div>
     );
 };
 
@@ -371,11 +425,11 @@ export function ChartSection({ companySymbol }) {
                 const sharePriceUrl = `${host}/${companySymbol}/getSharePrice/${range}`;
                 const respSharePrice = await axios.get(sharePriceUrl);
                 // Format the data to match what Lightweight Charts expects
-                const formattedData = respSharePrice.data.map(item => ({
-                    time: item.Date,
-                    value: item.Close,
-                }));
-                setSharePriceData(formattedData);
+                // const formattedData = respSharePrice.data.map(item => ({
+                //     time: item.Date,
+                //     value: item.Close,
+                // }));
+                setSharePriceData(respSharePrice.data);
             } catch (error) {
                 console.error('Error fetching Share price data:', error);
                 setSharePriceError(error.message || 'Failed to fetch share price data');
@@ -445,15 +499,18 @@ export function ChartSection({ companySymbol }) {
                     </div>
                 </Col>
             </Row>
+
             <Row className="ChartRow">
                 <Col className="SharePriceChart">
-                    <h2>Share Price</h2>
                     {isSharePriceLoading ? (
                         <p>Loading Share Price data...</p>
                     ) : sharePriceError ? (
                         <p>Error loading Share Price data: {sharePriceError}</p>
                     ) : sharePriceData ? (
-                        <ChartComponent data={sharePriceData} />
+                        <ChartComponent
+                            data={sharePriceData}
+                            c_symbol={companySymbol}
+                        />
                     ) : (
                         <p>No Share Price data available.</p>
                     )}
