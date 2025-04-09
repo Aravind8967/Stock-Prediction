@@ -6,8 +6,6 @@ import './Chart.css';
 import axios from "axios";
 import { createChart, AreaSeries, LineSeries } from 'lightweight-charts';
 
-const host = 'http://localhost:83';
-
 const ChartComponent = ({ data, c_symbol }) => {
     const chartContainerRef = useRef(null);
     const toolTipRef = useRef(null);
@@ -405,7 +403,7 @@ export function ChartSection({ companySymbol }) {
     useEffect(() => {
         const fetchFundamentals = async () => {
             try {
-                const resFundamentals = await axios.get(`${host}/${companySymbol}/getFundamentals`);
+                const resFundamentals = await axios.get(`/api/${companySymbol}/getFundamentals`);
                 setFundamentalData(resFundamentals.data);
             } catch (error) {
                 console.error('Error fetching fundamentals:', error);
@@ -422,7 +420,7 @@ export function ChartSection({ companySymbol }) {
             setSharePriceError(null); // Reset error on new fetch
             const range = 4;
             try {
-                const sharePriceUrl = `${host}/${companySymbol}/getSharePrice/${range}`;
+                const sharePriceUrl = `/api/${companySymbol}/getSharePrice/${range}`;
                 const respSharePrice = await axios.get(sharePriceUrl);
                 // Format the data to match what Lightweight Charts expects
                 // const formattedData = respSharePrice.data.map(item => ({

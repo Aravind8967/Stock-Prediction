@@ -7,21 +7,20 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
-@app.route('/<c_name>/getSharePrice/<int:years>')
+@app.route('/api/<c_name>/getSharePrice/<int:years>')
 def getSharePrice(c_name, years=5):
     details = CompanyDetails(c_name)
     share_price = details.sharePriceRange(period=f'{years}y')
     share_price_json = json.loads(share_price.to_json(orient='records', date_format='iso'))
     return jsonify(share_price_json)
 
-@app.route('/<c_name>/getFundamentals')
+@app.route('/api/<c_name>/getFundamentals')
 def getFundamentals(c_name):
     details = FindValues(c_name)
     fundamentals = details.getCompanyDetails()
-    print(fundamentals)
     return jsonify(fundamentals)
 
-@app.route('/<c_name>/getFutureSharePrice/<int:future_years>')
+@app.route('/api/<c_name>/getFutureSharePrice/<int:future_years>')
 def getFutureSharePrice(c_name, future_years):
     share_price_prediction = SharePricePrediction(company_name=c_name)
     share_price = share_price_prediction.SharePrice(future_years=future_years)
@@ -35,14 +34,13 @@ def getFutureSharePrice(c_name, future_years):
     }
     return jsonify(data)
 
-@app.route('/<c_name>/getFutureFundamentals/<int:future_years>')
+@app.route('/api/<c_name>/getFutureFundamentals/<int:future_years>')
 def getFutureFundamentals(c_name, future_years):
     predicted_values = PredictValues(c_name=c_name)
     fundamental_values = predicted_values.getFutureValues(future_year=future_years)
-    print(fundamental_values)
     return jsonify(fundamental_values)
 
-@app.route('/<c_name>/getCompany')
+@app.route('/api/<c_name>/getCompany')
 def getCompany(c_name):
     try:
         c_db = CompaniesDB()
@@ -55,7 +53,7 @@ def getCompany(c_name):
         print(f"Error fetching company details: {e}")
         return jsonify({'status': 500, 'data': 'Internal server error'}), 500
 
-@app.route('/suggestions')
+@app.route('/api/suggestions')
 def getSuggestions():
     query = request.args.get('query')
     if query:

@@ -6,7 +6,6 @@ import { ChartSection } from "./Chart";
 import axios from "axios";
 import './SearchBar.css'
 
-const host = 'http://localhost:83'
 
 export function SearchBar() {
     const [companyName, setCompanyName] = useState('');
@@ -20,7 +19,7 @@ export function SearchBar() {
 
         if (newCompanyName.length > 0) {
             try {
-                const response = await axios.get(`${host}/suggestions?query=${newCompanyName}`);
+                const response = await axios.get(`/api/suggestions?query=${newCompanyName}`);
                 setSuggestions(response.data.data || []);
             } catch (error) {
                 console.error("Error fetching suggestions:", error);
@@ -39,7 +38,7 @@ export function SearchBar() {
     const handleSearchClick = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${host}/${companyName}/getCompany`);
+            const response = await axios.get(`/api/${companyName}/getCompany`);
             setSearchResults(response.data);
         } catch (error) {
             console.error('Error fetching company details:', error);
