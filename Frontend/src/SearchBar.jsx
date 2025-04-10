@@ -6,8 +6,52 @@ import { ChartSection } from "./Chart";
 import { Row, Col, Alert } from "react-bootstrap";
 import axios from "axios";
 import './SearchBar.css'
-import { ColorType } from "lightweight-charts";
 
+
+async function getFutureFundamentals (c_name, futureRange){
+    try {
+        console.log('calling getFutureFundamentals function')
+        var c_symbol = await getSymbol(c_name)
+        var response = await axios.get(`/api/${c_symbol}/getFutureFundamentals/${futureRange}`);
+        console.log(response);
+        if (response.status === 200){
+            console.log(response.data)
+            return response.data
+        }
+    }
+    catch (error){
+        console.error("Api fetchin error : ", error)
+    }
+}
+
+async function getFutureShareprice (c_name, futureRange){
+    try {
+        console.log('calling getFutureShareprice function')
+        var c_symbol = await getSymbol(c_name)
+        var response = await axios.get(`/api/${c_symbol}/getFutureSharePrice/${futureRange}`);
+        if (response.status === 200){
+            console.log(response.data)
+            return response.data
+        }
+    }
+    catch (error){
+        console.error("Api fetchin error : ", error)
+    }
+}
+
+async function getSymbol(c_name){
+    try{
+        var response = await axios.get(`/api/${c_name}/getCompany`)
+        if(response.status === 200){
+            var c_symbol = await response['data']['data'][0]['c_symbol']
+            console.log({'getSymbol': c_symbol})
+            return c_symbol
+        }
+    }
+    catch (error) {
+        console.error('API fetching error : ', error)
+    }
+}
 
 export function SearchBar() {
 
@@ -17,7 +61,7 @@ export function SearchBar() {
     const [suggestions, setSuggestions] = useState([]);
     const [searchResults, setSearchResults] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [showAlert, setShowAlert] = useState(false);
+    const [showAlert, setShowAlert] = useState(null);
 
     const handleInputChange = async (event) => {
         const newCompanyName = event.target.value;
@@ -48,7 +92,7 @@ export function SearchBar() {
             setSearchResults(response.data);
         } catch (error) {
             console.error('Error fetching company details:', error);
-            setShowAlert(true)
+            setShowAlert({massage : 'Company not found, Please check the Company name and try again.', type: 'danger'})
             setSearchResults({ status: 500, data: 'Error fetching data' });
         } finally {
             setLoading(false);
@@ -57,17 +101,40 @@ export function SearchBar() {
 
     // ========================= Future Range variables ===================================
 
-    const [futureRange, setFutureRange] = useState(4)
-    
-    function futureBtn () {
+    const [futureRange, setFutureRange] = useState(4);
+    const [futureFundamentals, setFutureFundamental] = useState(null);
+    const [futureSharePrice, setFutureSharePrice] = useState(null);
+
+     
+    async function futureBtn () {
         console.log('futureBtn pressed');
+        if (companyName === '' ){
+            setShowAlert({massage : 'Please Give the Company name and try again.', type: 'warning'})
+        }
+        const futureSharePriceVal = await getFutureShareprice(companyName, futureRange);
+        const futureFundamentalsVal = await getFutureFundamentals(companyName, futureRange);
+        setFutureSharePrice(futureSharePriceVal);
+        setFutureFundamental(futureFundamentalsVal)
+        // try{
+        //     if (futureSharePriceVal) {
+        //         console.log({'futureBtn - try': futureSharePriceVal})
+        //     }
+        // }
+        // catch (error) {
+        //     console.error("API fetching error : ", error);
+        // }
     }
+
+    console.log({'future_share_price' : futureSharePrice?.future_share_price})
+    console.log({'previous_share_price' : futureSharePrice?.previous_share_price})
+    console.log({'future-eps' : futureFundamentals?.future_eps})
+    console.log({'eps' : futureFundamentals?.eps})
 
     return (
         <>
             {showAlert && (
-                <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                    Company not found, Please check the Company name and try again.
+                <Alert variant={showAlert.type} onClose={() => setShowAlert(null)} dismissible>
+                    {showAlert.massage}
                 </Alert>
             )}
             <Row>
