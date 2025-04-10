@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 import { Chart } from "react-google-charts";
 import './Chart.css';
 import './Chart.css';
@@ -399,15 +399,20 @@ export function ChartSection({ companySymbol }) {
     const [sharePriceData, setSharePriceData] = useState(null);
     const [isSharePriceLoading, setIsSharePriceLoading] = useState(false);
     const [sharePriceError, setSharePriceError] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
 
     useEffect(() => {
         const fetchFundamentals = async () => {
             try {
                 const resFundamentals = await axios.get(`/api/${companySymbol}/getFundamentals`);
+                if (resFundamentals.data.error){
+                    setShowAlert(true);
+                }
                 setFundamentalData(resFundamentals.data);
             } catch (error) {
                 console.error('Error fetching fundamentals:', error);
                 setFundamentalData(null);
+                setShowAlert(true);
             }
         };
 
@@ -422,16 +427,12 @@ export function ChartSection({ companySymbol }) {
             try {
                 const sharePriceUrl = `/api/${companySymbol}/getSharePrice/${range}`;
                 const respSharePrice = await axios.get(sharePriceUrl);
-                // Format the data to match what Lightweight Charts expects
-                // const formattedData = respSharePrice.data.map(item => ({
-                //     time: item.Date,
-                //     value: item.Close,
-                // }));
                 setSharePriceData(respSharePrice.data);
             } catch (error) {
                 console.error('Error fetching Share price data:', error);
                 setSharePriceError(error.message || 'Failed to fetch share price data');
                 setSharePriceData(null);
+                setShowAlert(true);
             } finally {
                 setIsSharePriceLoading(false);
             }
@@ -441,6 +442,11 @@ export function ChartSection({ companySymbol }) {
 
     return (
         <>
+            {showAlert && (
+                <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                    Company not found, Please check the Company name and try again.
+                </Alert>
+            )}
             <Row className="ChartRow">
                 <Col className="ChartCol">
                     <div>
