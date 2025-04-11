@@ -9,43 +9,43 @@ import './SearchBar.css'
 import { FutureChartSection } from "./futureChart";
 
 
-async function getFutureFundamentals(c_name, futureRange) {
+async function getFutureFundamentals (c_name, futureRange){
     try {
         console.log('calling getFutureFundamentals function')
         var c_symbol = await getSymbol(c_name)
         var response = await axios.get(`/api/${c_symbol}/getFutureFundamentals/${futureRange}`);
         console.log(response);
-        if (response.status === 200) {
+        if (response.status === 200){
             console.log(response.data)
             return response.data
         }
     }
-    catch (error) {
+    catch (error){
         console.error("Api fetchin error : ", error)
     }
 }
 
-async function getFutureShareprice(c_name, futureRange) {
+async function getFutureShareprice (c_name, futureRange){
     try {
         console.log('calling getFutureShareprice function')
         var c_symbol = await getSymbol(c_name)
         var response = await axios.get(`/api/${c_symbol}/getFutureSharePrice/${futureRange}`);
-        if (response.status === 200) {
+        if (response.status === 200){
             console.log(response.data)
             return response.data
         }
     }
-    catch (error) {
+    catch (error){
         console.error("Api fetchin error : ", error)
     }
 }
 
-async function getSymbol(c_name) {
-    try {
+async function getSymbol(c_name){
+    try{
         var response = await axios.get(`/api/${c_name}/getCompany`)
-        if (response.status === 200) {
+        if(response.status === 200){
             var c_symbol = await response['data']['data'][0]['c_symbol']
-            console.log({ 'getSymbol': c_symbol })
+            console.log({'getSymbol': c_symbol})
             return c_symbol
         }
     }
@@ -59,14 +59,10 @@ export function SearchBar() {
     // ======================= Search Bar Variables =================================
 
     const [companyName, setCompanyName] = useState('');
-    const [companySymbol, setCompanySymbol] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [searchResults, setSearchResults] = useState(null);
     const [loading, setLoading] = useState(false);
     const [showAlert, setShowAlert] = useState(null);
-    const [futureValues, setFutureValues] = useState(null); // Store future values
-    const [showFutureChart, setShowFutureChart] = useState(false); // Toggle between charts
-    const [futureRange, setFutureRange] = useState(4);
 
     const handleInputChange = async (event) => {
         const newCompanyName = event.target.value;
@@ -92,17 +88,12 @@ export function SearchBar() {
 
     const handleSearchClick = async () => {
         setLoading(true);
-        setShowFutureChart(false);
         try {
             const response = await axios.get(`/api/${companyName}/getCompany`);
-            const c_symbol = response.data.data[0].c_symbol;
             setSearchResults(response.data);
-            setCompanySymbol(c_symbol);
-            console.log({ 'c_symbol': c_symbol });
-
         } catch (error) {
             console.error('Error fetching company details:', error);
-            setShowAlert({ massage: 'Company not found, Please check the Company name and try again.', type: 'danger' })
+            setShowAlert({massage : 'Company not found, Please check the Company name and try again.', type: 'danger'})
             setSearchResults({ status: 500, data: 'Error fetching data' });
         } finally {
             setLoading(false);
@@ -111,38 +102,26 @@ export function SearchBar() {
 
     // ========================= Future Range variables ===================================
 
+    const [futureRange, setFutureRange] = useState(4);
     const [futureFundamentals, setFutureFundamental] = useState(null);
     const [futureSharePrice, setFutureSharePrice] = useState(null);
-    
-    const futureBtn = async () => {
-        const companySymbol = await getSymbol(companyName);
-        setCompanySymbol(companySymbol)
-        console.log("futureBtn pressed", {'company symbol' : companySymbol});
-        if (companyName === "" || companySymbol === "") {
-            setShowAlert({
-                massage: "Please Give the Company name and try again.",
-                type: "warning",
-            });
-            return;
-        }
 
-        try {
-            const futureSharePriceVal = await axios.get(`/api/${companySymbol}/getFutureSharePrice/${futureRange}`);
-            const futureFundamentalsVal = await axios.get(`/api/${companySymbol}/getFutureFundamentals/${futureRange}`);
-            const futureData = {
-                futureSharePrice: futureSharePriceVal.data,
-                futureFundamentals: futureFundamentalsVal.data,
-            };
-            setFutureValues(futureData);
-            setShowFutureChart(true); // Show the future chart
-        } catch (error) {
-            console.error("Error fetching future data:", error);
-            setShowAlert({
-                massage: "Error fetching future data. Please try again.",
-                type: "danger",
-            });
+     
+    async function futureBtn () {
+        console.log('futureBtn pressed');
+        if (companyName === '' ){
+            setShowAlert({massage : 'Please Give the Company name and try again.', type: 'warning'})
         }
-    };
+        const futureSharePriceVal = await getFutureShareprice(companyName, futureRange);
+        const futureFundamentalsVal = await getFutureFundamentals(companyName, futureRange);
+        setFutureSharePrice(futureSharePriceVal);
+        setFutureFundamental(futureFundamentalsVal)
+    }
+
+    console.log({'future_share_price' : futureSharePrice?.future_share_price})
+    console.log({'previous_share_price' : futureSharePrice?.previous_share_price})
+    console.log({'future-eps' : futureFundamentals?.future_eps})
+    console.log({'eps' : futureFundamentals?.eps})
 
     return (
         <>
@@ -154,7 +133,7 @@ export function SearchBar() {
             <Row>
                 <Col className="SearchBarSection">
                     <div>
-                        <Form className="d-flex align-items-center" style={{ position: "relative" }} id="SearchBar">
+                        <Form className="d-flex align-items-center" style={{ position: 'relative' }} id="SearchBar">
                             <FormControl
                                 type="text"
                                 placeholder="Enter Company Name"
@@ -162,12 +141,7 @@ export function SearchBar() {
                                 value={companyName}
                                 onChange={handleInputChange}
                             />
-                            <Button
-                                variant="outline-success"
-                                onClick={handleSearchClick}
-                                disabled={loading}
-                                id="searchBtn"
-                            >
+                            <Button variant="outline-success" onClick={handleSearchClick} disabled={loading} id="searchBtn">
                                 {loading ? <Spinner animation="border" size="sm" /> : <FontAwesomeIcon icon={faSearch} />}
                             </Button>
 
@@ -186,9 +160,7 @@ export function SearchBar() {
                     </div>
                 </Col>
                 <Col className="futureSection">
-                    <Button variant="primary" className="futureBtn" onClick={futureBtn}>
-                        Predict
-                    </Button>
+                    <Button variant="primary" className="futureBtn" onClick={futureBtn}>Predict</Button>
                     <input type="range"
                         className="futureRange"
                         min={2}
@@ -201,15 +173,14 @@ export function SearchBar() {
                         className="futureRangeVal"
                         readOnly
                         value={futureRange}
-                    /><span style={{ fontSize: '1.7rem', margin: '0.5rem' }}>Years</span>
+                    /><span style={{fontSize: '1.7rem', margin: '0.5rem'}}>Years</span>
                 </Col>
             </Row>
+            {/* ============= All Chart Sections called by results ======================== */}
             <Row>
-                {/* Conditionally render ChartSection or FutureChartSection */}
-                {!showFutureChart && searchResults && (
-                    <ChartSection companySymbol={searchResults.data[0].c_symbol} />
-                )}
-                {showFutureChart && futureValues && <FutureChartSection c_symbol={companySymbol} futureValues={futureValues} />}
+                <SearchResults
+                    SearchData={searchResults}
+                />
             </Row>
         </>
     );

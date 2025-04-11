@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { Row, Col, Alert } from "react-bootstrap";
 import { Chart } from "react-google-charts";
 import './Chart.css';
-import './Chart.css';
 import axios from "axios";
 import { createChart, AreaSeries, LineSeries } from 'lightweight-charts';
+
 
 const ChartComponent = ({ data, c_symbol }) => {
     const chartContainerRef = useRef(null);
