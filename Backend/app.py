@@ -6,6 +6,9 @@ from src import SharePricePrediction, PredictValues, CompaniesDB, CompanyDetails
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+@app.route('/')
+def root():
+    return "API connected"
 
 @app.route('/api/<c_name>/getSharePrice/<int:years>')
 def getSharePrice(c_name, years=5):
