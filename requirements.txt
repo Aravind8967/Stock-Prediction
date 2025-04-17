@@ -1,4 +1,4 @@
-tensorflow==2.19.0
+# tensorflow==2.19.0
 flask
 flask_cors
 yfinance
@@ -6,3 +6,4 @@ numpy
 pandas
 requests
 tradingview-ta
+neuralprophet
