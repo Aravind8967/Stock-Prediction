@@ -86,9 +86,13 @@ def main_1():
 
     c_names = ['RELIANCE','HDFCBANK', 'TCS', 'KOTAKBANK', 'BAJFINANCE', 'BAJAJFINSV', 'SBILIFE']
 
-    for c_name in c_names:
-        details = CompanyDetails(c_name)
-        print(f'========================== {c_name} ==============================')
-        for data in details:
-            print(f'{data} : {details[data]}')
-        print('===================================================================') 
+    # for c_name in c_names:
+    details = CompanyDetails(c_names[0])
+    print(f'========================== {c_names[0]} ==============================')
+    for data in details:
+        print(f'{data} : {details[data]}')
+    print('===================================================================') 
+
+
+if __name__ == '__main__':
+    print('hello')
