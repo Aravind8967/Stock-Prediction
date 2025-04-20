@@ -70,7 +70,36 @@ class CompanyDetails:
         share_price_df['ema100'] = share_price_df['Close'].ewm(span=100, adjust=False).mean()
         share_price_df['ema200'] = share_price_df['Close'].ewm(span=200, adjust=False).mean()
         filtered_data = share_price_df[['Date', 'Close', 'ema100', 'ema200']]
-        return filtered_data       
+        return filtered_data
+
+    def techincalDetails(self):
+        def check(indicator):
+            if indicator in tv_indicater_data['oscillator']['COMPUTE']:
+                return tv_indicater_data['oscillator']['COMPUTE'][indicator]
+            else:
+                return 'NEUTRAL'
+            
+        tv_indicater_data = self.tv_fetch_data
+
+        data = {
+                'line_data' : {
+                'support1': round(tv_indicater_data['indicators']['Pivot.M.Classic.S1'],2),
+                'support2': round(tv_indicater_data['indicators']['Pivot.M.Classic.S2'],2),
+                'resistance1': round(tv_indicater_data['indicators']['Pivot.M.Classic.R1'],2),
+                'resistance2': round(tv_indicater_data['indicators']['Pivot.M.Classic.R2'],2)
+            },
+            'indicator_data' : {
+                'summary': tv_indicater_data['oscillator']['RECOMMENDATION'],
+                'rsi': check('RSI'),
+                'adx': check('ADX'),
+                'momentum': check('Mom'),
+                'macd': check('MACD'),
+                'bbp': check('BBP')
+            }
+        }
+
+        return data
+
 
     def getNearSharePrice(self, date):
         date = datetime.strptime(date, '%Y-%m-%d').date()
@@ -127,6 +156,8 @@ class CompanyDetails:
         return data
     
     def findPE(self, share_price, eps):
+        if eps <= 0:
+            eps = 1
         return int(share_price / eps)
 
     def companyDetails(self):
@@ -214,22 +245,6 @@ class CompanyDetails:
             'profit_margin' : profit_margin,
             'shareholders_equity' : val_to_crore(shareholders_equity),
             'outstanding_shares' : round((helper('sharesOutstanding')/10000000), 2),
-            'line_data' : {
-                'support1': round(tv_indicater_data['indicators']['Pivot.M.Classic.S1'], 2),
-                'support2': round(tv_indicater_data['indicators']['Pivot.M.Classic.S2'], 2),
-                'support3': round(tv_indicater_data['indicators']['Pivot.M.Classic.S3'], 2),
-                'resistance1': round(tv_indicater_data['indicators']['Pivot.M.Classic.R1'], 2),
-                'resistance2': round(tv_indicater_data['indicators']['Pivot.M.Classic.R2'], 2),
-                'resistance3': round(tv_indicater_data['indicators']['Pivot.M.Classic.R3'], 2)
-            },
-            'indicator_data' : {
-                'summary': tv_indicater_data['oscillator']['RECOMMENDATION'],
-                'rsi': check('RSI'),
-                'adx': check('ADX'),
-                'momentum': check('Mom'),
-                'macd': check('MACD'),
-                'bbp': check('BBP')
-            }
         }
         return data
     
