@@ -113,11 +113,13 @@ export function SearchBar() {
 
     const [futureFundamentals, setFutureFundamental] = useState(null);
     const [futureSharePrice, setFutureSharePrice] = useState(null);
-    
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('');
+
     const futureBtn = async () => {
         const companySymbol = await getSymbol(companyName);
         setCompanySymbol(companySymbol)
-        console.log("futureBtn pressed", {'company symbol' : companySymbol});
+        console.log("futureBtn pressed", { 'company symbol': companySymbol });
         if (companyName === "" || companySymbol === "") {
             setShowAlert({
                 massage: "Please Give the Company name and try again.",
@@ -125,6 +127,8 @@ export function SearchBar() {
             });
             return;
         }
+        setIsLoading(true);
+        setLoadingMessage('Predicting Future values...');
 
         try {
             const futureSharePriceVal = await axios.get(`/api/${companySymbol}/getFutureSharePrice/${futureRange}`);
@@ -142,10 +146,20 @@ export function SearchBar() {
                 type: "danger",
             });
         }
+        finally {
+            setIsLoading(false);
+            setLoadingMessage('');
+        }
     };
 
     return (
-        <>
+        <div className={`app-container ${isLoading ? 'loading' : ''}`}>
+            {isLoading && (
+                <div className="loading-overlay">
+                    <Spinner animation="border" role="status" className="loading-spinner" />
+                    <p className="loading-message">{loadingMessage}</p>
+                </div>
+            )}
             {showAlert && (
                 <Alert variant={showAlert.type} onClose={() => setShowAlert(null)} dismissible>
                     {showAlert.massage}
@@ -211,7 +225,7 @@ export function SearchBar() {
                 )}
                 {showFutureChart && futureValues && <FutureChartSection c_symbol={companySymbol} futureValues={futureValues} />}
             </Row>
-        </>
+        </div>
     );
 }
 

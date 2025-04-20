@@ -1,0 +1,33 @@
+services:
+  database:
+    build: 
+      context: ./Database
+      dockerfile: Dockerfile
+    image: aru8967/stockprediction:database
+    container_name: database
+    ports:
+      - "82:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Aru.8967
+      MYSQL_DATABASE: stockprediction
+      # MYSQL_USER: root
+      # MYSQL_PASSWORD: Aru.8967
+    volumes:
+      - db_data:/var/lib/mysql
+  
+  backend:
+    build: 
+      context: ./Backend
+      dockerfile: Dockerfile
+    image: aru8967/stockprediction:backend
+    container_name: backend
+    depends_on:
+      - database
+    ports:
+      - "81:8080"
+    volumes:
+      - backend_data:/app
+
+volumes:
+  db_data:
+  backend_data:

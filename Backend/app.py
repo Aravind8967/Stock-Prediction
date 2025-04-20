@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
-from src import SharePricePrediction, PredictValues, CompaniesDB, CompanyDetails, FindValues
+from src import CompaniesDB, CompanyDetails, FindValues
+from src import SharePricePrediction, PredictValues
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
