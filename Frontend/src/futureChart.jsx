@@ -332,26 +332,26 @@ function FutureChartComponent({ sharePriceValue }) {
 
         const pastCloseSeries = chart.addSeries(AreaSeries, { color: 'blue', lineWidth: 2 });
         const futureCloseSeries = chart.addSeries(LineSeries, { color: 'orange', lineWidth: 2 });
-        const ema200Series = chart.addSeries(LineSeries, { color: 'red', lineWidth: 1 });
+        // const ema200Series = chart.addSeries(LineSeries, { color: 'red', lineWidth: 1 });
 
         const pastCloseData = sharePriceValue.previous_share_price.map(item => ({
-            time: item.Date.split('T')[0],
+            time: item.Date,
             value: item.Close,
         }));
 
         const futureCloseData = sharePriceValue.future_share_price.map(item => ({
-            time: item.Date.split('T')[0],
+            time: item.Date,
             value: item.Close,
         }));
 
-        const ema200Data = sharePriceValue.previous_share_price.map(item => ({
-            time: item.Date.split('T')[0],
-            value: item.ema200,
-        }));
+        // const ema200Data = sharePriceValue.previous_share_price.map(item => ({
+        //     time: item.Date.split('T')[0],
+        //     value: item.ema200,
+        // }));
 
         pastCloseSeries.setData(pastCloseData);
         futureCloseSeries.setData(futureCloseData);
-        ema200Series.setData(ema200Data);
+        // ema200Series.setData(ema200Data);
 
         const toolTip = document.createElement('div');
         toolTipRef.current = toolTip;

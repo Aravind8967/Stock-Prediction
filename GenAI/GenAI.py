@@ -20,6 +20,8 @@ class LLM_connect:
         answer = response['message']['content']
         return answer
 
+
+
 if __name__ == '__main__':
     c = LLM_connect()
     while True:

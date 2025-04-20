@@ -27,13 +27,11 @@ def getFundamentals(c_name):
 def getFutureSharePrice(c_name, future_years):
     share_price_prediction = SharePricePrediction(company_name=c_name)
     share_price = share_price_prediction.SharePrice(future_years=future_years)
-    previous_share_price = share_price['previous_share_price']
-    future_share_price = share_price['future_share_price']
     
     # Parse JSON strings to Python dictionaries
     data = {
-        'previous_share_price': json.loads(previous_share_price.to_json(orient='records', date_format='iso')),
-        'future_share_price': json.loads(future_share_price.to_json(orient='records', date_format='iso'))
+        'previous_share_price': share_price['previous_share_price'],
+        'future_share_price': share_price['future_share_price']
     }
     return jsonify(data)
 

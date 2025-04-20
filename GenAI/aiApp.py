@@ -14,6 +14,8 @@ llm = LLM_connect()
 def root():
     return 'Gen API connected'
 
+
+
 @app.route('/ai/test/<question>')
 def test_chat(question):
     answer = llm.chat(question)

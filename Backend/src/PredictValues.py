@@ -1,123 +1,84 @@
+import torch
 import os
 import random
+import pandas as pd
 import numpy as np
 from .FindValues import FindValues
-from keras.models import Sequential, load_model
-from keras.layers import LSTM, Dense
+from neuralprophet.forecaster import NeuralProphet
+from neuralprophet.configure import ConfigSeasonality
+
 
 class PredictValues:
     def __init__(self, c_name):
         self.find_values = FindValues(c_name)
         self.c_name = c_name
         self.future_years_arr = []
-        self.n_feature = 1
-        self.n_steps = 3
         self.get_company_details = self.find_values.getCompanyDetails()
-        self.revenue_model = self.modelTrain(self.get_company_details['revenue'])
-        self.income_model = self.modelTrain(self.get_company_details['income'])
+        self.revenue_model = torch.load('Models/globle_revenue_model.np', weights_only=False, map_location='cpu')
+        self.revenue_model.restore_trainer(accelerator="cpu")
+        self.income_model = torch.load('Models/globle_income_model.np', weights_only=False, map_location='cpu')
+        self.income_model.restore_trainer(accelerator="cpu")
 
-    def prepareData(self, data):
-        x_data, y_data = [], []
+    def getFutureRevenueValues(self, future_year=5):
+        revenue_df = pd.DataFrame({
+            'ds' : pd.to_datetime(self.get_company_details['years'], format='%Y'),
+            'y' : self.get_company_details['revenue'],
+            'ID' : self.c_name
+        })
 
-        for i in range(len(data)):
-            end_ix = i + self.n_steps
-            if end_ix > len(data) - 1:
-                break
-            seq_x, seq_y = data[i:end_ix], data[end_ix]
-            x_data.append(seq_x)
-            y_data.append(seq_y)
+        future_year = self.revenue_model.make_future_dataframe(revenue_df, periods=future_year, n_historic_predictions=False)
+        revenue_future = self.revenue_model.predict(future_year)
 
-        return {
-            'x_data': np.array(x_data), 
-            'y_data': np.array(y_data)
-        }
+        self.future_years_arr = revenue_future['ds'].dt.year.astype(int).tolist()
+        revenue_values = [round(revenue, 2) for revenue in revenue_future['yhat1'].values]
+        return revenue_values
     
-    def modelTrain(self, data):
-        model = Sequential()
-        model.add(LSTM(100, activation='relu', return_sequences=True, input_shape=(self.n_steps, self.n_feature)))
-        model.add(LSTM(100, activation='relu'))
-        model.add(Dense(1))
-        model.compile(optimizer='adam', loss='mse')
-        
-        prepared_data = self.prepareData(data)
-        x_data = prepared_data['x_data']
-        # Reshape the input to [samples, timesteps, features]
-        x_data = x_data.reshape((x_data.shape[0], x_data.shape[1], self.n_feature))
+    def getFutureIncomeValues(self, future_year=5):
+        income_df = pd.DataFrame({
+            'ds' : pd.to_datetime(self.get_company_details['years'], format='%Y'),
+            'y' : self.get_company_details['income'],
+            'ID' : self.c_name
+        })
 
-        model.fit(x_data, prepared_data['y_data'], epochs=10, verbose=1)
-        return model
+        future_year = self.income_model.make_future_dataframe(income_df, periods=future_year, n_historic_predictions=False)
+        income_future = self.income_model.predict(future_year)
 
-    def getFutureRevenueValues(self, x_input, future_year=5):
-        x_input = np.array(x_input)
-        temp_input = list(x_input)
-
-        future_revenue_arr = []
-
-        current_year = 1
-        while current_year <= future_year:
-            if len(temp_input) > self.n_steps:
-                # If temp_input is longer than n_steps, keep only the latest n_steps values.
-                x_input = np.array(temp_input[1:])
-                x_input = x_input.reshape((1, self.n_steps, self.n_feature))
-                yhat = self.revenue_model.predict(x_input, verbose=0)
-                temp_input.append(yhat[0][0])
-                temp_input = temp_input[1:]
-            else:
-                x_input = x_input.reshape((1, self.n_steps, self.n_feature))
-                yhat = self.revenue_model.predict(x_input, verbose=0)
-                temp_input.append(yhat[0][0])
-            future_revenue_arr.append(round(yhat[0][0], 2))
-            self.future_years_arr.append(self.get_company_details['years'][-1]+current_year)
-            current_year += 1
-
-        return future_revenue_arr
+        income_values = [round(income, 2) for income in income_future['yhat1'].values]
+        return income_values
     
-    def getfutureSharePrice(self, eps_arr):
-        pe = self.get_company_details['pe']
-        if pe <= 0:
-            pe = 3
-        share_price = []
-        for eps in eps_arr:
-            share_price.append(round(eps * random.randint(pe, pe+5), 2))
-        return share_price
-
-    def getFutureIncomeValues(self, x_input, future_year=5):
-        x_input = np.array(x_input)
-        temp_input = list(x_input)
-
-        future_income_arr = []
-
-        current_year = 1
-        while current_year <= future_year:
-            if len(temp_input) > self.n_steps:
-                # If temp_input is longer than n_steps, keep only the latest n_steps values.
-                x_input = np.array(temp_input[1:])
-                x_input = x_input.reshape((1, self.n_steps, self.n_feature))
-                yhat = self.income_model.predict(x_input, verbose=0)
-                temp_input.append(yhat[0][0])
-                temp_input = temp_input[1:]
-            else:
-                x_input = x_input.reshape((1, self.n_steps, self.n_feature))
-                yhat = self.income_model.predict(x_input, verbose=0)
-                temp_input.append(yhat[0][0])
-            future_income_arr.append(round(yhat[0][0], 2))
-            current_year += 1
-
-        return future_income_arr
-
-    def npToval(self, arr):
+    def toFloat(self, arr):
         return [round(float(val), 2) for val in arr]
     
+    def toInt(self, arr):
+        return [int(val) for val in arr]
 
     def getFutureValues(self, future_year=5):
-        future_revenue = self.getFutureRevenueValues(self.get_company_details['revenue'][-3:], future_year)
-        future_income = self.getFutureIncomeValues(self.get_company_details['income'][-3:], future_year)
+        future_revenue = self.getFutureRevenueValues(future_year)
+        future_income = self.getFutureIncomeValues(future_year)
         future_values = self.get_company_details
         future_values['future_years'] = self.future_years_arr
-        future_values['future_revenue'] = self.npToval(future_revenue)
-        future_values['future_income'] = self.npToval(future_income)
-        future_values['future_eps'] = self.npToval(self.find_values.findEPS(future_income))
-        future_values['future_roe'] = self.npToval(self.find_values.findROE(future_income))
-        future_values['future_opm'] = self.npToval(self.find_values.findOPM(future_revenue, future_income))
-        future_values['future_price'] = self.npToval(self.getfutureSharePrice(future_values['future_eps']))
-        return future_values
+        future_values['future_revenue'] = future_revenue
+        future_values['future_income'] = future_income
+        future_values['future_eps'] = self.find_values.findEPS(future_income)
+        future_values['future_roe'] = self.find_values.findROE(future_income)
+        future_values['future_opm'] = self.find_values.findOPM(future_revenue, future_income)
+
+        data ={
+            'years' : self.toInt(future_values['years']),
+            'revenue' : self.toFloat(future_values['revenue']),
+            'income' : self.toFloat(future_values['income']),
+            'eps' : self.toFloat(future_values['eps']),
+            'pe' : int(future_values['pe']),
+            'roe' : self.toFloat(future_values['roe']),
+            'operating_expence' : self.toFloat(future_values['operating_expence']),
+            'profit_margin' : self.toFloat(future_values['profit_margin']),
+            'shareholders_equity' : self.toFloat(future_values['shareholders_equity']),
+            'outstanding_shares' : float(future_values['outstanding_shares']),
+            'future_years' : self.toInt(future_values['future_years']),
+            'future_revenue' : self.toFloat(future_values['future_revenue']),
+            'future_income' : self.toFloat(future_values['future_income']),
+            'future_eps' : self.toFloat(future_values['future_eps']),
+            'future_roe' : self.toFloat(future_values['future_roe']),
+            'future_opm' : self.toFloat(future_values['future_opm'])
+        }
+        return data

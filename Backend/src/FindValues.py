@@ -84,7 +84,7 @@ class FindValues:
 
 def main_1(): 
 
-    c_names = ['RELIANCE','HDFCBANK', 'TCS', 'KOTAKBANK', 'BAJFINANCE', 'BAJAJFINSV', 'SBILIFE']
+    c_names = ['AMBUJACEM','HDFCBANK', 'TCS', 'KOTAKBANK', 'BAJFINANCE', 'BAJAJFINSV', 'SBILIFE']
 
     # for c_name in c_names:
     details = CompanyDetails(c_names[0])
@@ -95,4 +95,7 @@ def main_1():
 
 
 if __name__ == '__main__':
-    print('hello')
+    c_name = 'TECHM'
+    details = FindValues(c_name)
+    data = details.getCompanyDetails()
+    print(data)
