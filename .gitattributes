@@ -1,1 +1,2 @@
+Backend/Models/globle_shareprice_model.np filter=lfs diff=lfs merge=lfs -text
 *.np filter=lfs diff=lfs merge=lfs -text
