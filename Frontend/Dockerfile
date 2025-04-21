@@ -17,7 +17,7 @@ RUN npm run build
 # Stage 2: Serve the app using Nginx
 FROM nginx
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y vim sudo nano
+RUN apt-get update ; apt-get install -y vim sudo nano
 
 # Remove the default Nginx configuration
 RUN rm /etc/nginx/conf.d/default.conf

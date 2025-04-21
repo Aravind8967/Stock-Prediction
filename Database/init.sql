@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS mydatabase;
-USE mydatabase;
+CREATE DATABASE IF NOT EXISTS stockprediction;
+USE stockprediction;
 
 CREATE TABLE IF NOT EXISTS companies (
     c_id INT PRIMARY KEY,

@@ -7,4 +7,4 @@ requests
 tradingview-ta
 mysql-connector-python
 python-dotenv
-# neuralprophet
+neuralprophet

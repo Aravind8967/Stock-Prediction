@@ -6,20 +6,18 @@ import torch
 from neuralprophet.forecaster import NeuralProphet
 from neuralprophet.configure import ConfigSeasonality
 
-torch.serialization.add_safe_globals([NeuralProphet, ConfigSeasonality])
-model = torch.load('Models/globle_shareprice_model.np', weights_only=False, map_location='cpu')
-model.restore_trainer(accelerator="cpu")
 
 class SharePricePrediction:
     def __init__(self, company_name):
         self.c_name = company_name
         self.company_details = CompanyDetails(self.c_name)
         self.previous_share_price = []
-        # torch.serialization.add_safe_globals([NeuralProphet, ConfigSeasonality])
-        # self.model = torch.load('Models/globle_shareprice_model.np', weights_only=False, map_location='cpu')
-        # self.model.restore_trainer(accelerator="cpu")
+        torch.serialization.add_safe_globals([NeuralProphet, ConfigSeasonality])
+        self.model = torch.load('Models/globle_shareprice_model.np', weights_only=False, map_location='cpu')
+        self.model.restore_trainer(accelerator="cpu")
 
     def getFutureSharePrice(self, future_years):
+
         share_price = self.company_details.sharePriceRange(period='6y')
         self.previous_share_price = share_price[['Date', 'Close']].to_dict(orient='records')
         share_price_df = pd.DataFrame({
@@ -30,8 +28,9 @@ class SharePricePrediction:
         c_techincal_details = self.company_details.techincalDetails()
         c_min_price = c_techincal_details['line_data']['support2']
 
-        c_future_days = model.make_future_dataframe(share_price_df, periods=(365 * future_years), n_historic_predictions=False)
-        c_forcast = model.predict(c_future_days)
+
+        c_future_days = self.model.make_future_dataframe(share_price_df, periods=(365 * future_years), n_historic_predictions=False)
+        c_forcast = self.model.predict(c_future_days)
         
         c_forcast = c_forcast.rename(columns={'ds':'Date'}) 
         c_forcast['Date'] = pd.to_datetime(c_forcast['Date'], format='%Y-%m-%d').dt.strftime('%Y-%m-%d')
