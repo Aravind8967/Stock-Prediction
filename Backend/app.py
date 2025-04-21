@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
-from src import SharePricePrediction, PredictValues, CompaniesDB, CompanyDetails, FindValues
+from src import CompaniesDB, CompanyDetails, FindValues
+from src import SharePricePrediction, PredictValues
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -27,14 +28,13 @@ def getFundamentals(c_name):
 def getFutureSharePrice(c_name, future_years):
     share_price_prediction = SharePricePrediction(company_name=c_name)
     share_price = share_price_prediction.SharePrice(future_years=future_years)
-    
+  
     # Parse JSON strings to Python dictionaries
     data = {
         'previous_share_price': share_price['previous_share_price'],
         'future_share_price': share_price['future_share_price']
     }
     return jsonify(data)
-
 @app.route('/api/<c_name>/getFutureFundamentals/<int:future_years>')
 def getFutureFundamentals(c_name, future_years):
     predicted_values = PredictValues(c_name=c_name)

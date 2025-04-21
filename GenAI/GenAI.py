@@ -1,7 +1,7 @@
 from ollama import Client
 
 class LLM_connect:
-    def __init__(self, model='smollm2', port=11434):
+    def __init__(self, model='smollm2:135m', port=11434):
         self.model = model
         self.host = f'http://localhost:{port}'
         self.client = Client(

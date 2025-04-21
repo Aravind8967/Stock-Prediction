@@ -6,6 +6,13 @@
 * "SharePricePrediction" class's "futureSharePrice" function give both
     previous and future share_price values
 
+======================== Container details ===============================
+
+* frontend running on port  = 80:80
+* backend running on port   = 81:8080
+* database running on port  = 82:3306
+* ollama runing on port     = 83:80
+
 ========================== example API Data ==============================
 
 bussiness : SBI Life Insurance Company Limited operates as a private life insurance company in India. The company's life insurance business comprising individual and group life insurance products, including participating, non-participating, pension, group gratuity, group leave encashment, group superannuation, individual and group immediate annuity, unit-linked and variable insurance products, health, and micro insurance. It also provides accident and disability benefit, level term, and critical illness insurance products. The company offers its products through a multi-channel distribution network comprising individual agents, brokers, corporate agents, bancassurance partners, as well as certified insurance facilitators. It operates various partner branches. 
