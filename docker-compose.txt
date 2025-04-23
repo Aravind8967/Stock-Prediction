@@ -1,0 +1,41 @@
+services:
+  database:
+    image: mysql:8.0
+    build: 
+      context: ./Database
+      dockerfile: Dockerfile
+    container_name: database
+    ports:
+      - "82:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Aru.8967
+      MYSQL_DATABASE: stockprediction
+    volumes:
+      - db_data:/var/lib/mysql
+
+  genai:
+    image: ubuntu:22.04
+    build: 
+      context: ./GenAI
+      dockerfile: Dockerfile
+    container_name: genai
+    ports:
+      - "83:80"
+    volumes:
+      - genai:/root/.ollama/models
+
+  frontend:
+    image: aru8967/stockpred:letest
+    build: 
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - genai
+
+
+volumes:
+  db_data:
+  genai:

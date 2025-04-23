@@ -9,4 +9,6 @@ nohup python3 aiApp.py > aiApp.log 2>&1 &
 
 sleep 2
 
-tail -f aiApp.log
+echo "genAI API runnig"
+
+tail -f /app/aiApp.log
