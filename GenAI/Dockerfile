@@ -12,14 +12,18 @@ COPY . /app
 RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
+    vim \
     gnupg \
     python3 \
+    dos2unix \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Ollama using the installer script
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
+RUN dos2unix StartApp.sh \
+    && chmod 777 StartApp.sh
 
 RUN pip3 install -r requirements.txt
 
@@ -29,11 +33,6 @@ RUN ollama serve & \
     ollama pull smollm2:135m && \
     pkill -f "ollama serve"
 
-
-RUN chmod 755 *
-
-# Expose the port Ollama uses (11434 is used in this example)
 EXPOSE 80
 
-# At runtime, start Ollama server as the main process
 CMD ["sh", "StartApp.sh"]

@@ -1,9 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-<<<<<<< HEAD
-import { Row, Col, Alert } from "react-bootstrap";
-=======
 import { Row, Col, Alert, Spinner } from "react-bootstrap";
->>>>>>> test
 import { Chart } from "react-google-charts";
 import './Chart.css';
 import axios from "axios";
@@ -401,28 +397,18 @@ export function ChartSection({ companySymbol }) {
     }
     const [fundamentalData, setFundamentalData] = useState(null);
     const [sharePriceData, setSharePriceData] = useState(null);
-<<<<<<< HEAD
-    const [isSharePriceLoading, setIsSharePriceLoading] = useState(false);
-=======
     const [isLoading, setIsLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState('')
->>>>>>> test
     const [sharePriceError, setSharePriceError] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
 
     useEffect(() => {
         const fetchFundamentals = async () => {
-<<<<<<< HEAD
-            try {
-                const resFundamentals = await axios.get(`/api/${companySymbol}/getFundamentals`);
-                if (resFundamentals.data.error){
-=======
             setIsLoading(true);
             setLoadingMessage('Getting the Companies data')
             try {
                 const resFundamentals = await axios.get(`/api/${companySymbol}/getFundamentals`);
                 if (resFundamentals.data.error) {
->>>>>>> test
                     setShowAlert(true);
                 }
                 setFundamentalData(resFundamentals.data);
@@ -431,13 +417,10 @@ export function ChartSection({ companySymbol }) {
                 setFundamentalData(null);
                 setShowAlert(true);
             }
-<<<<<<< HEAD
-=======
             finally {
                 setIsLoading(false)
                 setLoadingMessage('')
             }
->>>>>>> test
         };
 
         fetchFundamentals();
@@ -445,12 +428,8 @@ export function ChartSection({ companySymbol }) {
 
     useEffect(() => {
         const fetchSharePrice = async () => {
-<<<<<<< HEAD
-            setIsSharePriceLoading(true);
-=======
             setIsLoading(true);
             setLoadingMessage('Getting the companies data')
->>>>>>> test
             setSharePriceError(null); // Reset error on new fetch
             const range = 4;
             try {
@@ -463,21 +442,14 @@ export function ChartSection({ companySymbol }) {
                 setSharePriceData(null);
                 setShowAlert(true);
             } finally {
-<<<<<<< HEAD
-                setIsSharePriceLoading(false);
-=======
                 setIsLoading(false);
                 setLoadingMessage('')
->>>>>>> test
             }
         };
         fetchSharePrice();
     }, [companySymbol]);
 
     return (
-<<<<<<< HEAD
-        <>
-=======
         <div className={`app-container ${isLoading ? 'loading' : ''}`}>
             {isLoading && (
                 <div className="loading-overlay">
@@ -485,7 +457,6 @@ export function ChartSection({ companySymbol }) {
                     <p className="loading-message">{loadingMessage}</p>
                 </div>
             )}
->>>>>>> test
             {showAlert && (
                 <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
                     Company not found, Please check the Company name and try again.
@@ -550,11 +521,7 @@ export function ChartSection({ companySymbol }) {
 
             <Row className="ChartRow">
                 <Col className="SharePriceChart">
-<<<<<<< HEAD
-                    {isSharePriceLoading ? (
-=======
                     {isLoading ? (
->>>>>>> test
                         <p>Loading Share Price data...</p>
                     ) : sharePriceError ? (
                         <p>Error loading Share Price data: {sharePriceError}</p>
@@ -568,10 +535,6 @@ export function ChartSection({ companySymbol }) {
                     )}
                 </Col>
             </Row>
-<<<<<<< HEAD
-        </>
-=======
         </div>
->>>>>>> test
     );
 }

@@ -1,0 +1,147 @@
+Importing plotly failed. Interactive plots will not work.
+Importing plotly failed. Interactive plots will not work.
+INFO - (NP.utils.configure_trainer) - Using accelerator cpu with 1 device(s).
+Training: |          | 0/? [00:00<?, ?it/s]INFO - (NP.utils.configure_trainer) - Using accelerator cpu with 1 device(s).
+Training: |          | 0/? [00:00<?, ?it/s]INFO - (NP.utils.configure_trainer) - Using accelerator cpu with 1 device(s).
+Training: |          | 0/? [00:00<?, ?it/s] * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.1.8:8080
+Press CTRL+C to quit
+ * Restarting with stat
+Importing plotly failed. Interactive plots will not work.
+Importing plotly failed. Interactive plots will not work.
+INFO - (NP.utils.configure_trainer) - Using accelerator cpu with 1 device(s).
+Training: |          | 0/? [00:00<?, ?it/s]INFO - (NP.utils.configure_trainer) - Using accelerator cpu with 1 device(s).
+Training: |          | 0/? [00:00<?, ?it/s]INFO - (NP.utils.configure_trainer) - Using accelerator cpu with 1 device(s).
+Training: |          | 0/? [00:00<?, ?it/s] * Debugger is active!
+ * Debugger PIN: 365-427-549
+127.0.0.1 - - [23/Apr/2025 20:45:00] "GET /api/suggestions?query=a HTTP/1.0" 200 -
+127.0.0.1 - - [23/Apr/2025 20:45:00] "GET /api/suggestions?query=ad HTTP/1.0" 200 -
+127.0.0.1 - - [23/Apr/2025 20:45:00] "GET /api/suggestions?query=ada HTTP/1.0" 200 -
+127.0.0.1 - - [23/Apr/2025 20:45:05] "GET /api/suggestions?query=i HTTP/1.0" 200 -
+127.0.0.1 - - [23/Apr/2025 20:45:05] "GET /api/suggestions?query=in HTTP/1.0" 200 -
+127.0.0.1 - - [23/Apr/2025 20:45:06] "GET /api/suggestions?query=ind HTTP/1.0" 200 -
+127.0.0.1 - - [23/Apr/2025 20:45:09] "GET /api/State%20Bank%20of%20India/getCompany HTTP/1.0" 200 -
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\dtypes\cast.py:1056: RuntimeWarning: invalid value encountered in cast
+  if (arr.astype(int) == arr).all():
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\dtypes\cast.py:1080: RuntimeWarning: invalid value encountered in cast
+  if (arr.astype(int) == arr).all():
+
+127.0.0.1 - - [23/Apr/2025 20:45:12] "GET /api/SBIN/getFundamentals HTTP/1.0" 200 -
+127.0.0.1 - - [23/Apr/2025 20:45:13] "GET /api/SBIN/getSharePrice/4 HTTP/1.0" 200 -
+127.0.0.1 - - [23/Apr/2025 20:45:49] "GET /api/State%20Bank%20of%20India/getCompany HTTP/1.0" 200 -
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency B corresponds to 94.066% of the data.
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - D
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency D corresponds to 99.966% of the data.
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - D
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency D corresponds to 99.966% of the data.
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - D
+2025-04-23 20:45:53.193187: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-04-23 20:45:57.577833: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+Predicting: |          | 0/? [00:00<?, ?it/s]Predicting:   0%|          | 0/3 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/3 [00:00<?, ?it/s]Predicting DataLoader 0: 100%|##########| 3/3 [00:00<00:00, 47.31it/s]Predicting DataLoader 0: 100%|##########| 3/3 [00:00<00:00, 46.58it/s]127.0.0.1 - - [23/Apr/2025 20:46:03] "GET /api/SBIN/getFutureSharePrice/8 HTTP/1.0" 200 -
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\dtypes\cast.py:1056: RuntimeWarning: invalid value encountered in cast
+  if (arr.astype(int) == arr).all():
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\dtypes\cast.py:1080: RuntimeWarning: invalid value encountered in cast
+  if (arr.astype(int) == arr).all():
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency YS corresponds to 92.308% of the data.
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - YS
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency YS corresponds to 87.5% of the data.
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - YS
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency YS corresponds to 87.5% of the data.
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - YS
+
+Predicting: |          | 0/? [00:00<?, ?it/s]Predicting:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0: 100%|##########| 1/1 [00:00<00:00, 381.44it/s]Predicting DataLoader 0: 100%|##########| 1/1 [00:00<00:00, 277.75it/s]WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency YS corresponds to 92.308% of the data.
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - YS
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency YS corresponds to 87.5% of the data.
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - YS
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Major frequency YS corresponds to 87.5% of the data.
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+WARNING - (py.warnings._showwarnmsg) - C:\Users\Aravind\AppData\Local\Programs\Python\Python39\lib\site-packages\neuralprophet\df_utils.py:1152: FutureWarning: Series.view is deprecated and will be removed in a future version. Use ``astype`` as an alternative to change the dtype.
+  converted_ds = pd.to_datetime(ds_col, utc=True).view(dtype=np.int64)
+
+INFO - (NP.df_utils._infer_frequency) - Defined frequency is equal to major frequency - YS
+
+Predicting: |          | 0/? [00:00<?, ?it/s]Predicting:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0: 100%|##########| 1/1 [00:00<00:00, 446.16it/s]Predicting DataLoader 0: 100%|##########| 1/1 [00:00<00:00, 309.52it/s]127.0.0.1 - - [23/Apr/2025 20:46:05] "GET /api/SBIN/getFutureFundamentals/8 HTTP/1.0" 200 -

@@ -113,13 +113,6 @@ export function SearchBar() {
 
     const [futureFundamentals, setFutureFundamental] = useState(null);
     const [futureSharePrice, setFutureSharePrice] = useState(null);
-<<<<<<< HEAD
-    
-    const futureBtn = async () => {
-        const companySymbol = await getSymbol(companyName);
-        setCompanySymbol(companySymbol)
-        console.log("futureBtn pressed", {'company symbol' : companySymbol});
-=======
     const [isLoading, setIsLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState('');
 
@@ -127,7 +120,6 @@ export function SearchBar() {
         const companySymbol = await getSymbol(companyName);
         setCompanySymbol(companySymbol)
         console.log("futureBtn pressed", { 'company symbol': companySymbol });
->>>>>>> test
         if (companyName === "" || companySymbol === "") {
             setShowAlert({
                 massage: "Please Give the Company name and try again.",
@@ -135,11 +127,8 @@ export function SearchBar() {
             });
             return;
         }
-<<<<<<< HEAD
-=======
         setIsLoading(true);
         setLoadingMessage('Predicting Future values...');
->>>>>>> test
 
         try {
             const futureSharePriceVal = await axios.get(`/api/${companySymbol}/getFutureSharePrice/${futureRange}`);
@@ -157,12 +146,6 @@ export function SearchBar() {
                 type: "danger",
             });
         }
-<<<<<<< HEAD
-    };
-
-    return (
-        <>
-=======
         finally {
             setIsLoading(false);
             setLoadingMessage('');
@@ -177,7 +160,6 @@ export function SearchBar() {
                     <p className="loading-message">{loadingMessage}</p>
                 </div>
             )}
->>>>>>> test
             {showAlert && (
                 <Alert variant={showAlert.type} onClose={() => setShowAlert(null)} dismissible>
                     {showAlert.massage}
@@ -243,11 +225,7 @@ export function SearchBar() {
                 )}
                 {showFutureChart && futureValues && <FutureChartSection c_symbol={companySymbol} futureValues={futureValues} />}
             </Row>
-<<<<<<< HEAD
-        </>
-=======
         </div>
->>>>>>> test
     );
 }
 

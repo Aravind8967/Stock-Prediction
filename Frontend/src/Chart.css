@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-.ChartSection{
-=======
 .ChartSection {
->>>>>>> test
     margin-top: 10rem;
     color: white;
 }
@@ -19,11 +15,7 @@
     border-radius: 1rem;
 }
 
-<<<<<<< HEAD
-.SharePriceChart{
-=======
 .SharePriceChart {
->>>>>>> test
     margin-left: 3rem;
     margin-right: 3rem;
     height: 40rem;
@@ -36,8 +28,6 @@
     width: auto;
     height: auto;
     overflow: hidden;
-<<<<<<< HEAD
-=======
 }
 
 .app-container {
@@ -88,5 +78,4 @@
     to {
         transform: rotate(360deg);
     }
->>>>>>> test
 }
