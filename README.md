@@ -1,4 +1,4 @@
-# StockPredictor
+# StockPredictor with AI-Bot Assistance
 
 ## Overview
 StockPredictor is a containerized, microservices-based web application that provides:
