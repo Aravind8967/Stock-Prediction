@@ -24,7 +24,7 @@ StockPredictor is a containerized, microservices-based web application that prov
 
 ## Procedure to get the project into local
 
-step 1 :-
+## step 1 :-
 
   Prechecks :-
   This project usning some port for the app communication so the mentioned ports should be free
@@ -48,17 +48,17 @@ step 1 :-
   https://www.python.org/downloads/release/python-3913/
 
 
-step 2 :-
+## step 2 :-
   select the folder where you need to fetch the project and run below command
-    ```bash
-   git clone https://github.com/Aravind8967/Stock-Prediction.git
-   cd Stock-Prediction
-   ```
+  ```bash
+ git clone https://github.com/Aravind8967/Stock-Prediction.git
+ cd Stock-Prediction
+ ```
 
-step 3 :-
+## step 3 :-
   Start the docker desktop belfore running the project
 
-step 4 :-
+## step 4 :-
   To start the project run below command in git bash
   ```bash
   # Note :- Before running the StartProject.sh docker desktop should be running 
@@ -69,7 +69,7 @@ step 4 :-
   ./StopProject.sh
   ```
 
-step 5 :-
+## step 5 :-
   open your favourite Browser and search for
 
   http://localhost:80/
