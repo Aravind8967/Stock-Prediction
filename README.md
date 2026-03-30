@@ -74,12 +74,6 @@ StockPredictor is a containerized, microservices-based web application that prov
 
   http://localhost:80/
 
-# System design Images
-
-![system_design_1](Images/system_design_1.png)
-
-![system_design_2](Images/system_design_2.png)
-
 # Project images
 
 ![genai_1](Images/genai_1.png)
@@ -97,3 +91,7 @@ StockPredictor is a containerized, microservices-based web application that prov
 ![future_2](Images/future_2.png)
 
 ![future_3](Images/future_3.png)
+
+# System design Images
+
+![system_design_2](Images/system_design_2.png)
